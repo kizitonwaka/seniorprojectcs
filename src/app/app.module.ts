@@ -11,7 +11,7 @@ import { FooterComponent } from './modules/home/components/footer/footer.compone
 import { BodyComponent } from './modules/home/components/body/body.component';
 import { CalculatorComponent } from './modules/home/components/body/components/calculator/calculator.component';
 import { BrandsComponent } from './modules/home/components/body/components/brands/brands.component';
-import { EstimatorComponent } from './modules/home/components/body/components/estimator/estimator.component';
+import { EstimatorComponent } from './modules/estimator/components/estimator/estimator.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
