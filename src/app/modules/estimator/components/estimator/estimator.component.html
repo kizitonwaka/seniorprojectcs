@@ -4,3 +4,12 @@
 		[color-degraded]="{'0': '#00cbcb',  '15': '#f9c3d3', '25': '#fd8c8e'}">
 	</progress-bar>
 </article>
+
+<ng-container *ngFor="let estimate of estimates">
+	<article>
+		<div class="idp-card" [innerHTML]="estimate.yearsToFI"></div>
+		<div class="idp-card" [innerHTML]="estimate.FINumber"></div>
+		<div class="idp-card" [innerHTML]="estimate.amtSaved"></div>
+		<div class="idp-card" [innerHTML]="estimate.yearlyContribution"></div>
+	</article>
+</ng-container>
