@@ -1,15 +1,68 @@
 <article>
 	<progress-bar
-		[progress]="progress"
+		[progress]="(progress/total)*100"
 		[color-degraded]="{'0': '#00cbcb',  '15': '#f9c3d3', '25': '#fd8c8e'}">
 	</progress-bar>
 </article>
 
-<ng-container *ngFor="let estimate of estimates">
-	<article>
-		<div class="idp-card" [innerHTML]="estimate.yearsToFI"></div>
-		<div class="idp-card" [innerHTML]="estimate.FINumber"></div>
-		<div class="idp-card" [innerHTML]="estimate.amtSaved"></div>
-		<div class="idp-card" [innerHTML]="estimate.yearlyContribution"></div>
-	</article>
+<ng-container *ngIf="estimates">
+	<ng-container *ngFor="let estimate of estimates">
+		<article>
+			<div class="idp-card" [innerHTML]="estimate.yearsToFI"></div>
+			<div class="idp-card" [innerHTML]="estimate.FINumber"></div>
+			<div class="idp-card" [innerHTML]="estimate.amtSaved"></div>
+			<div class="idp-card" [innerHTML]="estimate.yearlyContribution"></div>
+		</article>
+	</ng-container>
+</ng-container>
+
+<!--<ng-container *ngIf="screenVal">
+	<div class="row">
+		<ng-container *ngFor="let element of arr; let myIndex = index; let isFirst = first; let isLast=last">
+			<ng-container *ngIf="myIndex === i">
+				<div class="column">
+					<div class="card">
+						<h3 [innerHTML]="element"></h3>
+						<p>Some text</p>
+						<ng-container *ngIf="!isFirst">
+							<button (click)="prevEntry()">prev</button>
+						</ng-container>
+						<ng-container *ngIf="!isLast">
+							<button (click)="nextEntry()">next</button>
+						</ng-container>
+						<ng-container *ngIf="isLast">
+								<button (click)="getYearstoFI()">submit</button>
+						</ng-container>
+					</div>
+				</div>
+			</ng-container>
+		</ng-container>
+	</div>
+</ng-container>-->
+
+<ng-container *ngIf="screenVal && estimateEnums">
+	<div class="row">
+			<ng-container *ngFor="let key of estimateEnums | keyvalue:customCompare; let myIndex = index; let isFirst = first; let isLast = last">
+				<ng-container *ngFor="let key2 of key.value | keyvalue:customCompare; let myIndex1 = index; let isFirst1 = first; let isLast1 = last">
+					<ng-container *ngIf="myIndex == i && myIndex1 == j">
+							<div class="column">
+								<div class="card">
+									<h3 [innerHTML]="estimateEnums[key.key.toString()][key2.key.toString()]"></h3>
+									<p>{{key.key.toString()}}</p>
+									<ng-container *ngIf="!isFirst || !isFirst1">
+										<button (click)="prevEntry(isFirst1)">prev</button>
+									</ng-container>
+									<ng-container *ngIf="!isLast || !isLast1">
+										<button (click)="nextEntry(isLast1)">next</button>
+									</ng-container>
+									<ng-container *ngIf="isLast && isLast1">
+											<button (click)="getYearstoFI()">submit</button>
+									</ng-container>
+								</div>
+							</div>
+						</ng-container>
+
+				</ng-container>
+			</ng-container>
+	</div>
 </ng-container>
