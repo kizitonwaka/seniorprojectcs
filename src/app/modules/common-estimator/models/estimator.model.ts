@@ -131,19 +131,22 @@ export class Estimate implements  EstimateInterface, OnChanges{
 
     public get FINumber() {
         if(this.FIFactors.RetirementEspense !== undefined){
-            return this.FIFactors.RetirementEspense / this.FIFactors.SafeWithdrawalRate;
+            console.log('FINUMBER',this.FIFactors.RetirementEspense / (this.FIFactors.SafeWithdrawalRate/100))
+            return this.FIFactors.RetirementEspense / (this.FIFactors.SafeWithdrawalRate/100);
         }
-        return this.yearlyEspenses / this.FIFactors.SafeWithdrawalRate;
+        return this.yearlyEspenses / (this.FIFactors.SafeWithdrawalRate/100);
     }
 
     public get yearlyContribution(): number {
+        console.log('cont',this.FIFactors.AnnualSalary - this.yearlyEspenses)
         return this.FIFactors.AnnualSalary - this.yearlyEspenses;
     }
 
-    public get amtSaved(): number {
+    public get investmentPortfolio(): number {
         let FirstYearSavings = 0;
         Object.values(this.InvestmentPortfolio).forEach((value)=> { FirstYearSavings += value });
-        return FirstYearSavings = this.yearlyContribution + (FirstYearSavings * this.FIFactors.ExpectedReturn);
+        console.log('porfolio ',FirstYearSavings)
+        return FirstYearSavings// = this.yearlyContribution + (FirstYearSavings * this.FIFactors.ExpectedReturn);
     }
 
     /**
@@ -154,11 +157,97 @@ export class Estimate implements  EstimateInterface, OnChanges{
      **/
     public get yearsToFI(): number{
         if(this.yearlyContribution > 0){
-            return (this.FINumber - this.amtSaved )/this.yearlyContribution;
+            console.log('years to fi:',Math.ceil(this.performCalculations));
+            return Math.ceil(this.performCalculations);
         }
         return NaN;
     }
+    
+
+
+    // calculator logic
+
+/**Returns the number of periods for an investment based on periodic,
+ * constant payments and a constant interest rate. 
+ * see https://support.office.com/en-us/article/nper-function-240535b5-6653-4d2d-bfcf-b6a38151d815*/
+private NPER (Rate, Pmt, PV, FV, Type) {
+
+	FV=FV || 0; // default value of 0;
+	Type=Type || 0; // default value of 0;
+
+	var totalIncomeFromFlow;
+	var sumOfPvAndPayment;
+	var currentValueOfPvAndPayment;
+
+	if (Rate == 0 && Pmt == 0) {
+		console.warn("Invalid Pmt argument");
+		return null;
+	}
+	else if (Rate == 0) {
+        return (- (PV + FV) / Pmt);
+    }
+	else if (Rate <= -1) {
+		console.warn("Invalid Pmt argument");
+		return null;
+	}
+
+    totalIncomeFromFlow = (Pmt / Rate);
+    
+    //generally not needed as assumption is that payments are at end of year
+	if (Type == 1) {
+		totalIncomeFromFlow *= (1 + Rate);
+	}
+
+	sumOfPvAndPayment = (-FV + totalIncomeFromFlow);
+	currentValueOfPvAndPayment = (PV + totalIncomeFromFlow);
+	if ((sumOfPvAndPayment < 0) && (currentValueOfPvAndPayment < 0)) {
+		sumOfPvAndPayment = -sumOfPvAndPayment;
+		currentValueOfPvAndPayment = 0-currentValueOfPvAndPayment;
+	}
+	else if ((sumOfPvAndPayment <= 0) || (currentValueOfPvAndPayment <= 0)) {
+		console.warn("NPer cannot be calculated");
+		return null;
+	}
+
+	let totalInterestRate = sumOfPvAndPayment / currentValueOfPvAndPayment;
+    return Math.log(totalInterestRate) / Math.log(Rate + 1);
+    
+    
 }
+
+    //shorter nper function
+    private nper(ir, pmt, pv, fv) {
+        var nbperiods;
+
+        if (ir != 0)
+            ir = ir / 100;
+
+        nbperiods = Math.log((-fv * ir + pmt)/(pmt + ir * pv))/ Math.log(1 + ir)
+
+        return nbperiods;
+    }
+
+    private get performCalculations(){
+        var investmentportfolio = this.investmentPortfolio; //portfolio
+        var yearlycontribution = this.yearlyContribution; //contributions
+        var expectedReturn = this.FIFactors.ExpectedReturn/100; //expected return 
+
+        var error = false;
+        // Require Withdrawal Rate is < Expected Return
+
+        // calculations
+        let FINumber = this.FINumber;
+        let yearsToFI= this.NPER(
+                            expectedReturn/*rate*/,
+                            -1*yearlycontribution/*pmt*/,
+                            -1*investmentportfolio/*current value*/,
+                            FINumber-this.FIFactors.CurrentSavingsBalance/*wanted outcome*/,0
+                            /*payment due*/);
+
+        return yearsToFI;
+    }
+}
+
 
 new Estimate ({
     Account: {

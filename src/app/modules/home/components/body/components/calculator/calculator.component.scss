@@ -22,3 +22,9 @@
     padding: 20px;
     text-align: center;
 }
+
+@media screen and (max-width: 340px) {
+    .calculator-fg {
+        width: 70%;
+    }
+}

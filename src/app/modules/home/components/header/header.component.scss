@@ -1,0 +1,19 @@
+.header-bg {
+    width: 100%;
+    background-color: #26211E;
+    color: white;
+    position: fixed;
+    right: 0px;
+    left: 0px;
+    z-index: 10;
+}
+
+.header-text {
+    color: white;
+}
+
+@media screen and (max-width: 800px) {
+    .header-bg {
+        position: relative;
+    }
+}

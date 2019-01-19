@@ -30,6 +30,8 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private lastJ = new Array();
 	private myIndex=0;
 	private myIndex1=0;
+	private progressPerc = 1;// = 1/this.total;
+	private newEstimate: Estimate;
 
 	constructor(private estimatorService: EstimatorService) { }
 
@@ -40,7 +42,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	ngOnChanges() {
 		alert("ngOnChanges")
 		if(this.estimates)
-		this.estimates = this.estimates.splice(0);
+			this.estimates = this.estimates.splice(0);
 		console.log('onchages: ', this.estimates)
 		console.log(this.estimates)
 	}
@@ -49,9 +51,18 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.ngUnsubscribe
 	}
 
-	private nextEntry(islast) {
+	private updateProgressPercentage() {
+		this.progressPerc=Math.ceil((this.progress/this.total)*100)
+	}
+
+	private nextEntry(index, index2, input, islast?, submit?) {
+		this.myEstimate[index][index2] = input;
+		if(submit) {
+			return;
+		}
 		if(this.progress < this.total){
 			this.progress++;
+			this.updateProgressPercentage()
 		}
 		if(islast) {
 			this.lastJ.push(this.j);
@@ -64,6 +75,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private prevEntry(isFirst1) {
 		if(this.progress !== 1){
 			this.progress--;
+			this.updateProgressPercentage()
 		}
 		if(isFirst1) {
 			this.i--;
@@ -76,10 +88,13 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		//this is needed to keep order of elements in marlup since keys are complex types
 		return 0;
 	}
-	private getYearstoFI(){
+	private getYearstoFI(index, index2, input){
+		this.nextEntry(index,index2,input,true,true)
 		//get years to fi and other values here
+		this.newEstimate = new Estimate(this.myEstimate);
+		alert(this.newEstimate.yearsToFI)
 	}
-	
+
 	private getEntries() {
 		this.myEstimate = {
 			Account: {
@@ -136,8 +151,16 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 				this.total++;
 			});
 		});
-		alert(this.total)
+		this.waits(10);
+		this.progressPerc = 1/this.total
 	}
+	private waits(ms){
+		var start = new Date().getTime();
+		var end = start;
+		while(end < start + ms) {
+		  end = new Date().getTime();
+	   }
+	 }
 	private initEstimates() {
 		if(this.isLoggedIn){
 			const subject = this.estimatorService.all(1);
