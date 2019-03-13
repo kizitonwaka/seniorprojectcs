@@ -29,8 +29,10 @@
 
 /* Remove extra left and right margins, due to padding */
 .brands-card-row {
-  margin: 0 -5px;
-  width: 100%;
+  left: 0;
+  right: 0;
+  margin-right: -10px;
+  margin-left: 5px;
 }
 
 /* Clear floats after the columns */
