@@ -43,3 +43,8 @@
     right: 0;
     left: 0;
   }
+
+  .progress-bar {
+    position: relative;
+    z-index: 100;
+  }

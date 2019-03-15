@@ -32,6 +32,8 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private myIndex1=0;
 	private progressPerc = 1;// = 1/this.total;
 	private newEstimate: Estimate;
+	private visibility = true;
+	private dispEstimate;
 
 	constructor(private estimatorService: EstimatorService) { }
 
@@ -92,7 +94,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.nextEntry(index,index2,input,true,true)
 		//get years to fi and other values here
 		this.newEstimate = new Estimate(this.myEstimate);
-		alert(this.newEstimate.yearsToFI)
+		this.visibility = false;
 	}
 
 	private getEntries() {
@@ -153,6 +155,10 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		});
 		this.waits(10);
 		this.progressPerc = 1/this.total
+	}
+
+	private makeVisible() {//rename later
+		this.visibility = true;
 	}
 	private waits(ms){
 		var start = new Date().getTime();
