@@ -123,7 +123,7 @@ export class Estimate implements  EstimateInterface, OnChanges{
         this.YearlyContribution = this.yearlyContribution;
     } 
 
-    private get yearlyEspenses(): number {
+    public get yearlyEspenses(): number {
         let sum = 0;
         Object.values(this.Espenses).forEach((value)=> { sum += value })
         return sum;

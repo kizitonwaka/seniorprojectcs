@@ -32,8 +32,8 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private myIndex1=0;
 	private progressPerc = 1;// = 1/this.total;
 	private newEstimate: Estimate;
+	private dispEstimate: Object;
 	private visibility = true;
-	private dispEstimate;
 
 	constructor(private estimatorService: EstimatorService) { }
 
@@ -95,6 +95,17 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		//get years to fi and other values here
 		this.newEstimate = new Estimate(this.myEstimate);
 		this.visibility = false;
+		this.dispEstimate = {
+			salary: 'Annual Salary: $'+`${ this.newEstimate.FIFactors.AnnualSalary }`,
+			expenses: 'Expenses: $'+`${ this.newEstimate.yearlyEspenses }`,
+			yearlyContribution: 'Yearly Savings: $'+`${ this.newEstimate.yearlyContribution }`,
+			retirementEspense: (this.newEstimate.FIFactors.RetirementEspense > 0)? 
+								'Retirement Expenses: $'+`${ this.newEstimate.FIFactors.RetirementEspense }` : 
+								'Retirement Expenses: $'+`${ this.newEstimate.yearlyEspenses }`,
+			fiNumber: 'Projected Balance at Retirement: $'+`${ this.newEstimate.FINumber }`,
+			yearsToFI: 'Projected Years to Independence: ' + `${ this.newEstimate.yearsToFI }`
+		}
+		console.log(this.dispEstimate);
 	}
 
 	private getEntries() {
