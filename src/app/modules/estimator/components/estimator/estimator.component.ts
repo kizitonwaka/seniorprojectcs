@@ -95,23 +95,28 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		//get years to fi and other values here
 		this.newEstimate = new Estimate(this.myEstimate);
 		this.visibility = false;
-		this.dispEstimate = {
-			salary: 'Annual Salary: $'+`${ this.newEstimate.FIFactors.AnnualSalary }`,
-			expenses: 'Expenses: $'+`${ this.newEstimate.yearlyEspenses }`,
-			yearlyContribution: 'Yearly Savings: $'+`${ this.newEstimate.yearlyContribution }`,
-			retirementEspense: (this.newEstimate.FIFactors.RetirementEspense > 0)? 
-								'Retirement Expenses: $'+`${ this.newEstimate.FIFactors.RetirementEspense }` : 
-								'Retirement Expenses: $'+`${ this.newEstimate.yearlyEspenses }`,
-			fiNumber: 'Projected Balance at Retirement: $'+`${ this.newEstimate.FINumber }`,
-			yearsToFI: 'Projected Years to Independence: ' + `${ this.newEstimate.yearsToFI }`
-		}
+		this.dispEstimate = this.getDispEstimate(this.newEstimate)
 		console.log(this.dispEstimate);
 	}
 
+	private getDispEstimate (est: Estimate){
+		console.log("in here!")
+		let dispEstimate = {
+			salary: 'Annual Salary: $'+`${ est.FIFactors.AnnualSalary }`,
+			expenses: 'Expenses: $'+`${ est.yearlyEspenses }`,
+			yearlyContribution: 'Yearly Savings: $'+`${ est.yearlyContribution }`,
+			retirementEspense: (est.FIFactors.RetirementEspense > 0)? 
+								'Retirement Expenses: $'+`${ est.FIFactors.RetirementEspense }` : 
+								'Retirement Expenses: $'+`${ est.yearlyEspenses }`,
+			fiNumber: 'Projected Balance at Retirement: $'+`${ est.FINumber }`,
+			yearsToFI: 'Projected Years to Independence: ' + `${ est.yearsToFI }`
+		}
+		return dispEstimate;
+	}
 	private getEntries() {
 		this.myEstimate = {
 			Account: {
-				AccountNumber: 1,
+				AccountNumber: 50,
 				FirstName: "Daniel",
 				LastName: "Weigh",
 				Token: "dway@ms.com",
@@ -179,22 +184,25 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	   }
 	 }
 	private initEstimates() {
+		this.isLoggedIn = true;//testing
 		if(this.isLoggedIn){
 			const subject = this.estimatorService.all(1);
 			combineLatest(
 				subject.SalEstimate$
 				).pipe(
-				takeUntil(this.ngUnsubscribe),
+				takeUntil(this.ngUnsubscribe)/*,
 				tap(([s]) => {
-				})).subscribe(([estimates]) => {
-					this.estimates = estimates;
-				}),
-				filter(([s]) => !!s ),
+				}) */).subscribe(([data]) => {
+					this.estimates = data;
+				})/* ,
+				filter(([s]) => s ) */,
 				map(([SalEstimate]) => {
 				const estimateState = {
 					estimatesList: SalEstimate
 				}
 				this.estimates = estimateState.estimatesList
+				console.log(this.estimates)
+				console.log("out here!")
 				})
 			} else {
 				this.getEntries();

@@ -6,13 +6,14 @@
     right: 0 !important;
     left: 0 !important;
     height:60px;
+    width: 100%;
 }
 
 @media screen and (max-width: 400px) {
     .footer {
         position: fixed;
-        right: 0;
-        left: 0;
+        right: 0 !important;
+        left: 0 !important;
         z-index: 10;
         bottom: 0;
         height: 30px !important;

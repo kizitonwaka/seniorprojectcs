@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-<ng-container *ngIf="1"><!--logged in, so visibility true to disp-->
+<ng-container *ngIf="!1"><!--logged in, so visibility true to disp-->
 	<section class="progress-bar">
 		<progress-bar
 			[progress]="(progress/total)*100"
@@ -34,11 +34,12 @@
 
 <ng-container *ngIf="!estimates">
 	<ng-container *ngFor="let estimate of estimates">
-		<article class="idp-card">
-			<span class="idp-card" [innerHTML]="estimate.yearsToFI"></span>
-			<span class="idp-card" [innerHTML]="estimate.FINumber"></span>
-			<span class="idp-card" [innerHTML]="estimate.investmentPortfolio"></span>
-			<span class="idp-card" [innerHTML]="estimate.yearlyContribution"></span>
+		<article class="idp-card est-card est-text est-centered">
+			<div [innerHTML]="estimate.salary"></div>
+			<div [innerHTML]="estimate.yearlyContribution"></div>
+			<div [innerHTML]="estimate.retirementEspense"></div>
+			<div [innerHTML]="estimate.fiNumber"></div>
+			<div [innerHTML]="estimate.yearsToFI"></div>
 		</article>
 	</ng-container>
 </ng-container>
@@ -56,3 +57,4 @@
 <section class="footer">
 	<app-footer></app-footer>
  </section>
+ <estimator-chart></estimator-chart>

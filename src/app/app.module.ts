@@ -12,6 +12,7 @@ import { BodyComponent } from './modules/home/components/body/body.component';
 import { CalculatorComponent } from './modules/home/components/body/components/calculator/calculator.component';
 import { BrandsComponent } from './modules/home/components/body/components/brands/brands.component';
 import { EstimatorComponent } from './modules/estimator/components/estimator/estimator.component';
+import { EstimatorChartComponent } from './modules/estimator/components/estimator-chart/estimator-chart.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -48,7 +49,8 @@ const appRoutes: Routes = [
     BodyComponent,
     CalculatorComponent,
     BrandsComponent,
-    EstimatorComponent
+    EstimatorComponent,
+    EstimatorChartComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

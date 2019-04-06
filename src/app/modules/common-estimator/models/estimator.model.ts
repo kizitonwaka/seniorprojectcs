@@ -248,7 +248,6 @@ private NPER (Rate, Pmt, PV, FV, Type) {
     }
 }
 
-
 new Estimate ({
     Account: {
         AccountNumber: 1,
