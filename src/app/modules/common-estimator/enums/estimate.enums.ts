@@ -1,45 +1,16 @@
-export enum Account {
-    AccountNumber = "account number",
-    FirstName = "first name",
-    LastName = "last name",
-    Token = "email address",
+export enum Demographics {
     Age = "age"
 };
 
 export enum Espenses {
-    Mortgages = "mortgages",
-    Rent = "rent",
-    PropertyTaxes = "property taxes",
-    StrataFeeOrCondoFee = "strata fee or condo fee",
-    HouseOrTenantInsurance = "house or tenant insurance",
-    LoanPayment = "loan payment",
-    VehicleInsurance = "vehicle insurance",
-    VehicleMaintenance = "vehicle maintenance",
-    HealthExpense = "health expense",
-    BankFees = "bank fees",
-    DebtPayments = "debt payment",
-    EmergencyExpense = "emergency expense",
-    ClothingAndShoes = "clothing and shoes",
-    VetBills = "vertinary bills",
-    Gifts = "gifts",
-    Cable = "cable",
-    Cell = "cellphone bill",
-    Electricity = "electricity bill",
-    Gas = "gas",
-    Water = "water",
-    Other = "other bills or fees"
+    ExpenseTotal = "total of expenses"
 };
 
-export enum InvestmentPortfolio {
-    Stocks = "stocks",
-    Bonds ="bonds",
-    MutualFunds ="mutual funds",
-    MoneyMarketFunds ="money market funds",
-    ExchangeTradedFunds ="exchange traded funds",
-    Other ="other investments"
+export enum Investments {
+    SumofInvestments = "sum of investments"
 };
 
-export enum FIFactors {
+export enum Factors {
     ExpectedReturn = "expected return on investments",
     CurrentSavingsBalance = "balance in savings account",
     AnnualSalary = "annual salary",

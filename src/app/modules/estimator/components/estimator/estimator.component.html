@@ -1,14 +1,13 @@
 <app-header></app-header>
 
-<ng-container *ngIf="!1"><!--logged in, so visibility true to disp-->
-	<section class="progress-bar">
-		<progress-bar
-			[progress]="(progress/total)*100"
-			[color-degraded]="{'0': '#00cbcb',  '15': '#f9c3d3', '25': '#fd8c8e'}">
-		</progress-bar>
-	</section>
-	
 	<ng-container *ngIf="visibility">
+		<section class="progress-bar">
+			<progress-bar
+				[progress]="(progress/total)*100"
+				[color-degraded]="{'0': '#00cbcb',  '15': '#f9c3d3', '25': '#fd8c8e'}">
+			</progress-bar>
+		</section>
+
 		<div class="est-card est-text est-centered">
 			<ng-container *ngFor="let key of estimateEnums | keyvalue:customCompare; let myIndex = index; let isFirst = first; let isLast = last">
 				<ng-container *ngFor="let key2 of key.value | keyvalue:customCompare; let myIndex1 = index; let isFirst1 = first; let isLast1 = last">
@@ -18,21 +17,20 @@
 						<ng-container *ngIf="!isFirst || !isFirst1">
 							<button class="est-button est-text" (click)="prevEntry(isFirst1)">prev</button>
 						</ng-container>
-						<input #input class="est-input" type="text">
+						<input #input class="est-input" type="number" required>
 						<ng-container *ngIf="!isLast || !isLast1">
 							<button class="est-button est-text" (click)="nextEntry(key.key.toString(), key2.key.toString(),input.value, isLast1)" (keyup)="nextEntry1(input.value)">next</button>
 						</ng-container>
 						<ng-container *ngIf="isLast && isLast1">
-								<button class="est-button est-text" (click)="getYearstoFI(key.key.toString(), key2.key.toString(),input.value)">submit</button>
+							<button class="est-button est-text" (click)="getYearstoFI(key.key.toString(), key2.key.toString(),input.value)">submit</button>
 						</ng-container>
 					</ng-container>
 				</ng-container>
 			</ng-container>
 		</div>
 	</ng-container>
-</ng-container>
 
-<ng-container *ngIf="!estimates">
+<!--<ng-container *ngIf="estimates">
 	<ng-container *ngFor="let estimate of estimates">
 		<article class="idp-card est-card est-text est-centered">
 			<div [innerHTML]="estimate.salary"></div>
@@ -42,7 +40,7 @@
 			<div [innerHTML]="estimate.yearsToFI"></div>
 		</article>
 	</ng-container>
-</ng-container>
+</ng-container>-->
 
 <ng-container *ngIf="!visibility && newEstimate && dispEstimate">
 	<article class="idp-card est-card est-text est-centered">
@@ -52,9 +50,11 @@
 		<div [innerHTML]="dispEstimate.fiNumber"></div>
 		<div [innerHTML]="dispEstimate.yearsToFI"></div>
 	</article>
+	<article>
+	<estimator-chart></estimator-chart>
+	</article>
 </ng-container>
 
 <section class="footer">
 	<app-footer></app-footer>
  </section>
- <estimator-chart></estimator-chart>

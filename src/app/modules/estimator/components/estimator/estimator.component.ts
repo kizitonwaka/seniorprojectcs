@@ -19,18 +19,18 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private estimates: Estimate[];
 	private myEstimate: EstimateInterface;
 	
-	private progress: number = 1;
+	private progress: number = 0;
 	private isLoggedIn: boolean;
 	private estimateEnums = EstimateEnums;
 	private screenVal: string;
 	private arr = new Array();
-	private total = 0;
+	private total=0;
 	private i = 0;
 	private j = 0;
 	private lastJ = new Array();
 	private myIndex=0;
 	private myIndex1=0;
-	private progressPerc = 1;// = 1/this.total;
+	private progressPerc = 1;
 	private newEstimate: Estimate;
 	private dispEstimate: Object;
 	private visibility = true;
@@ -58,6 +58,8 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	private nextEntry(index, index2, input, islast?, submit?) {
+		if(!input || input < 0)
+			return
 		this.myEstimate[index][index2] = input;
 		if(submit) {
 			return;
@@ -87,10 +89,12 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.j--;
 	}
 	private customCompare(a, b) {
-		//this is needed to keep order of elements in marlup since keys are complex types
+		//this is needed to keep order of elements in markup since keys are complex types
 		return 0;
 	}
 	private getYearstoFI(index, index2, input){
+		if(!input || input < 0)
+			return
 		this.nextEntry(index,index2,input,true,true)
 		//get years to fi and other values here
 		this.newEstimate = new Estimate(this.myEstimate);
@@ -102,11 +106,11 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private getDispEstimate (est: Estimate){
 		console.log("in here!")
 		let dispEstimate = {
-			salary: 'Annual Salary: $'+`${ est.FIFactors.AnnualSalary }`,
+			salary: 'Annual Salary: $'+`${ est.Factors.AnnualSalary }`,
 			expenses: 'Expenses: $'+`${ est.yearlyEspenses }`,
 			yearlyContribution: 'Yearly Savings: $'+`${ est.yearlyContribution }`,
-			retirementEspense: (est.FIFactors.RetirementEspense > 0)? 
-								'Retirement Expenses: $'+`${ est.FIFactors.RetirementEspense }` : 
+			retirementEspense: (est.Factors.RetirementEspense > 0)? 
+								'Retirement Expenses: $'+`${ est.Factors.RetirementEspense }` : 
 								'Retirement Expenses: $'+`${ est.yearlyEspenses }`,
 			fiNumber: 'Projected Balance at Retirement: $'+`${ est.FINumber }`,
 			yearsToFI: 'Projected Years to Independence: ' + `${ est.yearsToFI }`
@@ -115,50 +119,21 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	}
 	private getEntries() {
 		this.myEstimate = {
-			Account: {
-				AccountNumber: 50,
-				FirstName: "Daniel",
-				LastName: "Weigh",
-				Token: "dway@ms.com",
+			Demographics: {
 				Age: 41
 			},
 			Espenses: {
-				Mortgages: 100,
-				Rent: 100,
-				PropertyTaxes: 100,
-				StrataFeeOrCondoFee: 100,
-				HouseOrTenantInsurance: 100,
-				LoanPayment: 1000,
-				VehicleInsurance: 100,
-				VehicleMaintenance: 100,
-				HealthExpense: 100,
-				BankFees: 100,
-				DebtPayments: 100,
-				EmergencyExpense: 100,
-				ClothingAndShoes: 100,
-				VetBills: 100,
-				Gifts: 100,
-				Cable: 100,
-				Cell: 100,
-				Electricity: 100,
-				Gas: 100,
-				Water: 100,
-				Other: 100
+				ExpenseTotal: 35000
 			},
-			InvestmentPortfolio: {
-				Stocks: 100,
-				Bonds: 100,
-				MutualFunds: 100,
-				MoneyMarketFunds: 100,
-				ExchangeTradedFunds: 100,
-				Other: 100
+			Investments: {
+				SumofInvestments: 50000
 			},
-			FIFactors: {
-				ExpectedReturn: 100,
-				CurrentSavingsBalance: 100,
+			Factors: {
+				ExpectedReturn: 5,
+				CurrentSavingsBalance: 100000,
 				AnnualSalary: 100,
-				SafeWithdrawalRate: 100,
-				RetirementEspense: 100
+				SafeWithdrawalRate: 4,
+				RetirementEspense: 40000
 			}
 		};
 		Object.entries(this.estimateEnums).forEach(([key,value]) => {
@@ -169,7 +144,6 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 				this.total++;
 			});
 		});
-		this.waits(10);
 		this.progressPerc = 1/this.total
 	}
 
@@ -184,29 +158,24 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	   }
 	 }
 	private initEstimates() {
-		this.isLoggedIn = true;//testing
-		if(this.isLoggedIn){
-			const subject = this.estimatorService.all(1);
+			const subject = this.estimatorService.all();
+			//get previous data
 			combineLatest(
 				subject.SalEstimate$
-				).pipe(
-				takeUntil(this.ngUnsubscribe)/*,
-				tap(([s]) => {
-				}) */).subscribe(([data]) => {
-					this.estimates = data;
-				})/* ,
-				filter(([s]) => s ) */,
-				map(([SalEstimate]) => {
-				const estimateState = {
-					estimatesList: SalEstimate
-				}
-				this.estimates = estimateState.estimatesList
-				console.log(this.estimates)
-				console.log("out here!")
-				})
-			} else {
-				this.getEntries();
+			).pipe(
+			takeUntil(this.ngUnsubscribe)
+			).subscribe(([data]) => {
+				this.estimates = data;
+			}),
+			map(([SalEstimate]) => {
+			const estimateState = {
+				estimatesList: SalEstimate
 			}
+			this.estimates = estimateState.estimatesList
+			});
+
+			//collect new data
+			this.getEntries();
 	}	
 
 }
