@@ -1,11 +1,10 @@
 .header-bg {
-    background-color: #26211E;
+    background-color: #5f5f5f;
     color: white;
-    position: fixed;
+    position: sticky;
     right: 0px;
     left: 0px;
-    z-index: 10;
-    width: 100%;
+    top: 0px;
 }
 
 .header-text {
@@ -14,6 +13,6 @@
 
 @media screen and (max-width: 800px) {
     .header-bg {
-        position: relative;
+        //position: relative;
     }
 }

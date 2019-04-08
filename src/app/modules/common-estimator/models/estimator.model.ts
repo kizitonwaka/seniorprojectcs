@@ -186,7 +186,7 @@ private NPER (Rate, Pmt, PV, FV, Type) {
 
 new Estimate ({
     Demographics: {
-        Age: 41
+        Age: 24
     },
     Espenses: {
         ExpenseTotal: 35000
@@ -197,7 +197,7 @@ new Estimate ({
     Factors: {
         ExpectedReturn: 5,
         CurrentSavingsBalance: 100000,
-        AnnualSalary: 100,
+        AnnualSalary: 100000,
         SafeWithdrawalRate: 4,
         RetirementEspense: 40000
     }

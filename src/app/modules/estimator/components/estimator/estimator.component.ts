@@ -15,15 +15,17 @@ import * as EstimateEnums from '../../../common-estimator/enums/estimate.enums'
 })
 export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 
-	public ngUnsubscribe = new Subject();
+	private ngUnsubscribe = new Subject();
 	private estimates: Estimate[];
 	private myEstimate: EstimateInterface;
-	
-	private progress: number = 0;
-	private isLoggedIn: boolean;
+	private newEstimate: Estimate;
+	private dispEstimate: Object;
 	private estimateEnums = EstimateEnums;
-	private screenVal: string;
+	private screenVal: any;
 	private arr = new Array();
+
+	private isLoggedIn: boolean;
+	private progress: number = 0;
 	private total=0;
 	private i = 0;
 	private j = 0;
@@ -31,8 +33,6 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private myIndex=0;
 	private myIndex1=0;
 	private progressPerc = 1;
-	private newEstimate: Estimate;
-	private dispEstimate: Object;
 	private visibility = true;
 
 	constructor(private estimatorService: EstimatorService) { }
@@ -60,7 +60,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private nextEntry(index, index2, input, islast?, submit?) {
 		if(!input || input < 0)
 			return
-		this.myEstimate[index][index2] = input;
+		this.newEstimate[index][index2] = input;
 		if(submit) {
 			return;
 		}
@@ -77,10 +77,8 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.j++;
 	}
 	private prevEntry(isFirst1) {
-		if(this.progress !== 1){
-			this.progress--;
-			this.updateProgressPercentage()
-		}
+		this.progress--;
+		this.updateProgressPercentage()
 		if(isFirst1) {
 			this.i--;
 			this.j = this.lastJ.pop();
@@ -95,27 +93,31 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private getYearstoFI(index, index2, input){
 		if(!input || input < 0)
 			return
+		this.progress++;
 		this.nextEntry(index,index2,input,true,true)
 		//get years to fi and other values here
-		this.newEstimate = new Estimate(this.myEstimate);
 		this.visibility = false;
-		this.dispEstimate = this.getDispEstimate(this.newEstimate)
+		this.dispEstimate = this.getDispEstimate(this.newEstimate);
 		console.log(this.dispEstimate);
+		console.log(this.newEstimate);
+		console.log(this.myEstimate);
 	}
 
 	private getDispEstimate (est: Estimate){
 		console.log("in here!")
+		if(est != undefined){
 		let dispEstimate = {
 			salary: 'Annual Salary: $'+`${ est.Factors.AnnualSalary }`,
-			expenses: 'Expenses: $'+`${ est.yearlyEspenses }`,
 			yearlyContribution: 'Yearly Savings: $'+`${ est.yearlyContribution }`,
 			retirementEspense: (est.Factors.RetirementEspense > 0)? 
 								'Retirement Expenses: $'+`${ est.Factors.RetirementEspense }` : 
 								'Retirement Expenses: $'+`${ est.yearlyEspenses }`,
 			fiNumber: 'Projected Balance at Retirement: $'+`${ est.FINumber }`,
-			yearsToFI: 'Projected Years to Independence: ' + `${ est.yearsToFI }`
+			yearsToFI: 'Age of financial independence: ' + `${ est.yearsToFI } + ${est.Demographics.Age}`
 		}
-		return dispEstimate;
+		return dispEstimate
+	}
+		
 	}
 	private getEntries() {
 		this.myEstimate = {

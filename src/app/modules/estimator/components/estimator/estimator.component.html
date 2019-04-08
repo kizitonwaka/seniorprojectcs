@@ -1,14 +1,12 @@
 <app-header></app-header>
-
+<section class="progress-bar">
+	<progress-bar
+		[progress]="(progress/total)*100"
+		[color-degraded]="{'0': '#00cbcb',  '15': '#f9c3d3', '25': '#fd8c8e'}">
+	</progress-bar>
+</section>
 	<ng-container *ngIf="visibility">
-		<section class="progress-bar">
-			<progress-bar
-				[progress]="(progress/total)*100"
-				[color-degraded]="{'0': '#00cbcb',  '15': '#f9c3d3', '25': '#fd8c8e'}">
-			</progress-bar>
-		</section>
-
-		<div class="est-card est-text est-centered">
+		<section class="est-card est-text est-centered">
 			<ng-container *ngFor="let key of estimateEnums | keyvalue:customCompare; let myIndex = index; let isFirst = first; let isLast = last">
 				<ng-container *ngFor="let key2 of key.value | keyvalue:customCompare; let myIndex1 = index; let isFirst1 = first; let isLast1 = last">
 					<ng-container *ngIf="myIndex == i && myIndex1 == j">
@@ -17,7 +15,7 @@
 						<ng-container *ngIf="!isFirst || !isFirst1">
 							<button class="est-button est-text" (click)="prevEntry(isFirst1)">prev</button>
 						</ng-container>
-						<input #input class="est-input" type="number" required>
+						<input #input class="est-input" type="number">
 						<ng-container *ngIf="!isLast || !isLast1">
 							<button class="est-button est-text" (click)="nextEntry(key.key.toString(), key2.key.toString(),input.value, isLast1)" (keyup)="nextEntry1(input.value)">next</button>
 						</ng-container>
@@ -27,31 +25,23 @@
 					</ng-container>
 				</ng-container>
 			</ng-container>
-		</div>
+		</section>
 	</ng-container>
 
-<!--<ng-container *ngIf="estimates">
-	<ng-container *ngFor="let estimate of estimates">
+<ng-container *ngIf="!visibility && dispEstimate">
+	<article class="est-row">
 		<article class="idp-card est-card est-text est-centered">
-			<div [innerHTML]="estimate.salary"></div>
-			<div [innerHTML]="estimate.yearlyContribution"></div>
-			<div [innerHTML]="estimate.retirementEspense"></div>
-			<div [innerHTML]="estimate.fiNumber"></div>
-			<div [innerHTML]="estimate.yearsToFI"></div>
+			<ng-container *ngFor="let item of dispEstimate | keyvalue">
+				<div class="est-column_container">
+					<div class="est-column">
+						<div class="est-card" [innerHTML]="item.value"></div>
+					</div>
+				</div>
+			</ng-container>
 		</article>
-	</ng-container>
-</ng-container>-->
-
-<ng-container *ngIf="!visibility && newEstimate && dispEstimate">
-	<article class="idp-card est-card est-text est-centered">
-		<div [innerHTML]="dispEstimate.salary"></div>
-		<div [innerHTML]="dispEstimate.yearlyContribution"></div>
-		<div [innerHTML]="dispEstimate.retirementEspense"></div>
-		<div [innerHTML]="dispEstimate.fiNumber"></div>
-		<div [innerHTML]="dispEstimate.yearsToFI"></div>
 	</article>
 	<article>
-	<estimator-chart></estimator-chart>
+	<!--<estimator-chart></estimator-chart>-->
 	</article>
 </ng-container>
 
