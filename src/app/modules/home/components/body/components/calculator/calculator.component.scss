@@ -1,0 +1,33 @@
+.calculator-container {
+    position: relative;
+    text-align: center;
+}
+.calculator-image {
+    filter: blur(1.5px);
+    -webkit-filter: blur(1.5px);
+}
+
+.calculator-fg {
+    background-color: #5f5f5f;
+    color: white;
+    font-weight: bold;
+    border: 3px solid #f1f1f1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 80%;
+    padding: 20px;
+    text-align: center;
+}
+
+@media screen and (max-width: 340px) {
+    .calculator-fg {
+        width: 70%;
+    }
+}
+
+.calculator-link {
+    color: #cbf4ac;
+}

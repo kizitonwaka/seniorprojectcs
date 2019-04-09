@@ -1,0 +1,48 @@
+
+
+@mixin aspect-ratio($width, $height) {
+	position: relative;
+	&:before {
+	  display: block;
+	  content: "";
+	  width: 100%;
+	  padding-top: ($height / $width) * 100%;
+	}
+	> .content {
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	  right: 0;
+	  bottom: 0;
+	}
+  }
+
+.header {
+	@include aspect-ratio(16,9);
+}
+@media screen and (min-width: 800) {
+	.header {
+		position: absolute;
+		top: 120px !important;
+		//@include aspect-ratio(8,8);
+	}
+}
+.estimator-chart {
+    position: fixed;
+	top: 15%;
+	left: 15%;
+	right:15%;
+	bottom: 15%;
+	height: 500px;
+	width: 700px
+}
+
+@media screen and (min-width: 600px) {//not needed now
+	.estimator-chart{
+		position: fixed;
+		top: 15%;
+		left: 15%;
+		right:15%;
+		bottom: 15%;
+	}
+}

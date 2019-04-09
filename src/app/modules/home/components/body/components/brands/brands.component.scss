@@ -1,0 +1,61 @@
+@import "../../../../../../../styles.scss";
+.brands-container {
+    //@extend .idp-card_in_a_row;
+    display: -webkit-inline-box;
+    width: 33%;
+    position: relative;
+    top: 0px;
+    bottom: 0px;
+}
+
+.brands-card {
+  border: 1px solid #26211E;
+}
+
+.brands-fg {
+    
+}
+
+@media screen and (max-width: 541px) {
+  .idp-text_xxlarge {
+    font-size: medium;
+  }
+}
+
+.brands-card-column {
+  float: left;
+  width: 33%;
+}
+
+/* Remove extra left and right margins, due to padding */
+.brands-card-row {
+  left: 0;
+  right: 0;
+  margin-right: -10px;
+  margin-left: 5px;
+}
+
+/* Clear floats after the columns */
+.brands-card-row:after {
+  content: "";
+  display: flex;
+  clear: both;
+}
+
+/* Responsive columns */
+@media screen and (max-width: 600px) {
+  .brands-card-column {
+    width: 100%;
+    display: block;
+    margin-bottom: 20px;
+  }
+}
+
+/* Style the counter cards */
+.brands-card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  padding: 16px;
+  text-align: center;
+  background-color: #f1f1f1;
+  min-height: 615px;
+}

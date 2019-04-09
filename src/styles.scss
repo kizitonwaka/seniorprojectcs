@@ -1,0 +1,71 @@
+@import "helpers";
+
+.idp-bg_color {
+    background-color:gainsboro;
+}
+.idp_no_margin {
+    margin: 0;
+}
+.idp-card {
+    padding: 32px 16px;
+}
+.idp-card_in_a_row {
+    @extend .idp-card;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.idp-inline {
+    display: flex;
+    flex-wrap: wrap;
+}
+.idp-text {
+    color: #0c0b0b;
+    font-family: futura-lt-w01-book, sans-serif;
+    font-size: 15px;
+}
+
+.idp-text_smaller {
+    @extend .idp-text;
+    font-size: smaller;
+}
+.idp-text_larger {
+    @extend .idp-text;
+    font-size: larger;
+}
+.idp-text_xlarge {
+    font-size: x-large;
+}
+.idp-text_xxlarge {
+    font-size: xx-large;
+}
+.idp-bold {
+    @extend .idp-text;
+    font-weight: bold;
+}
+
+.idp-align_left {
+    text-align: left;
+}
+
+.idp-center {
+    display: inline;
+    text-align: center;
+}
+
+.idp-align_end {
+    text-align: end;
+}
+
+.idp-link {
+    cursor: pointer;
+}
+
+.idp-link_toucheable {
+    @extend .idp-link;
+    padding: 8px;
+    width: max-content;
+}
+.idp-no-indentation {
+    list-style-type: none;
+}
