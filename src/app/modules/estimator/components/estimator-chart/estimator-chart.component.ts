@@ -10,39 +10,62 @@ export class EstimatorChartComponent implements OnInit {
   constructor() { }
   private LineChart=[];
   ngOnInit() {
-    this.LineChart = new Chart('lineChart', {
-      type: 'line',
+    var ctx = document.getElementById('myChart');
+var myChart = new Chart(ctx, {
+    type: 'bar',
     data: {
-     labels: ["Jan", "Feb", "March", "April", "May", "June","July","Aug","Sep","Oct","Nov","Dec"],
-     datasets: [{
-         label: 'others',
-         data: [9,7 , 3, 5, 2, 10,15,16,19,3,1,9],
-         fill:true,
-         lineTension:0.5,
-         borderColor:"red",
-         borderWidth: 2
-     },{
-      label: 'you',
-      data: [3,8 , 0, 5, 2, 5,5,16,8,3,1,3],
-      fill:true,
-      lineTension:0.5,
-      borderColor:"green",
-      borderWidth: 2
-  }]
-    }, 
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+            label: '# of Votes',
+            data: [12, 19, 3, 5, 2, 3],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 0.5
+        },{
+          label: '# of Votes',
+          data: [12, 19, 3, 5, 2, 3],
+          backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+          ],
+          borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+          ],
+          borderWidth: 0.5
+      }]
+    },
     options: {
-     title:{
-         text:"Comparison",
-         display:true
-     },
-     scales: {
-         yAxes: [{
-             ticks: {
-                 beginAtZero:true
-             }
-         }]
-     }
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
     }
-    });
+});
   }
 }

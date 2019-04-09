@@ -19,21 +19,21 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private estimates: Estimate[];
 	private myEstimate: EstimateInterface;
 	private newEstimate: Estimate;
-	private dispEstimate: Object;
+	public dispEstimate: Object;
 	private estimateEnums = EstimateEnums;
 	private screenVal: any;
 	private arr = new Array();
 
 	private isLoggedIn: boolean;
-	private progress: number = 0;
-	private total=0;
+	public progress: number = 0;
+	public total=0;
 	private i = 0;
 	private j = 0;
 	private lastJ = new Array();
 	private myIndex=0;
 	private myIndex1=0;
 	private progressPerc = 1;
-	private visibility = true;
+	public visibility = true;
 
 	constructor(private estimatorService: EstimatorService) { }
 
@@ -58,9 +58,11 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	private nextEntry(index, index2, input, islast?, submit?) {
-		if(!input || input < 0)
-			return
-		this.newEstimate[index][index2] = input;
+		if(!input || input < 0){
+			//alert("Invalid Entry")
+			//return;
+		}
+		this.myEstimate[index][index2] = input;
 		if(submit) {
 			return;
 		}
@@ -91,12 +93,15 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		return 0;
 	}
 	private getYearstoFI(index, index2, input){
-		if(!input || input < 0)
-			return
+		if(!input || input < 0){
+			//alert("Invalid Entry")
+			//return;
+		}
 		this.progress++;
 		this.nextEntry(index,index2,input,true,true)
 		//get years to fi and other values here
 		this.visibility = false;
+		this.newEstimate = new Estimate(this.myEstimate)
 		this.dispEstimate = this.getDispEstimate(this.newEstimate);
 		console.log(this.dispEstimate);
 		console.log(this.newEstimate);
@@ -106,15 +111,18 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private getDispEstimate (est: Estimate){
 		console.log("in here!")
 		if(est != undefined){
-		let dispEstimate = {
-			salary: 'Annual Salary: $'+`${ est.Factors.AnnualSalary }`,
-			yearlyContribution: 'Yearly Savings: $'+`${ est.yearlyContribution }`,
-			retirementEspense: (est.Factors.RetirementEspense > 0)? 
-								'Retirement Expenses: $'+`${ est.Factors.RetirementEspense }` : 
-								'Retirement Expenses: $'+`${ est.yearlyEspenses }`,
-			fiNumber: 'Projected Balance at Retirement: $'+`${ est.FINumber }`,
-			yearsToFI: 'Age of financial independence: ' + `${ est.yearsToFI } + ${est.Demographics.Age}`
-		}
+			//direct addition leads to concactenation of es.yeartofi with est.demo....age
+			//so we need to tell javascript that we want addition(we do this by converting to string and back to int)
+			let retirementAge = parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
+			let dispEstimate = {
+				salary: 'Annual Salary: $'+`${ est.Factors.AnnualSalary }`,
+				yearlyContribution: 'Yearly Savings: $'+`${ est.yearlyContribution }`,
+				retirementEspense: (est.Factors.RetirementEspense > 0)? 
+									'Retirement Expenses: $'+`${ est.Factors.RetirementEspense }` : 
+									'Retirement Expenses: $'+`${ est.yearlyEspenses }`,
+				fiNumber: 'Projected Balance at Retirement: $'+`${ est.FINumber }`,
+				yearsToFI: 'Age of financial independence: ' + retirementAge
+			}
 		return dispEstimate
 	}
 		

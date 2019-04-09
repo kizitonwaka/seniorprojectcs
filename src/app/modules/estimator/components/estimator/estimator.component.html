@@ -29,19 +29,17 @@
 	</ng-container>
 
 <ng-container *ngIf="!visibility && dispEstimate">
-	<article class="est-row">
-		<article class="idp-card est-card est-text est-centered">
-			<ng-container *ngFor="let item of dispEstimate | keyvalue">
-				<div class="est-column_container">
-					<div class="est-column">
-						<div class="est-card" [innerHTML]="item.value"></div>
-					</div>
-				</div>
-			</ng-container>
-		</article>
-	</article>
-	<article>
-	<!--<estimator-chart></estimator-chart>-->
+	<article class="">
+		<section class="idp-card est-card est-text">
+			<div class="est-card_row">
+				<ng-container *ngFor="let item of dispEstimate | keyvalue">
+					<div class="est-card_column" [innerHTML]="item.value"></div>
+				</ng-container>
+			</div>
+		</section>
+		<section class="">
+			<estimator-chart></estimator-chart>
+		</section>
 	</article>
 </ng-container>
 
