@@ -1,17 +1,21 @@
 <app-header></app-header>
-<section class="progress-bar">
+
+<article class="progress-bar">
 	<progress-bar
 		[progress]="(progress/total)*100"
 		[color-degraded]="{'0': '#00cbcb',  '15': '#f9c3d3', '25': '#fd8c8e'}">
 	</progress-bar>
-</section>
-	<ng-container *ngIf="visibility">
-		<section class="est-card est-text est-centered">
-			<ng-container *ngFor="let key of estimateEnums | keyvalue:customCompare; let myIndex = index; let isFirst = first; let isLast = last">
-				<ng-container *ngFor="let key2 of key.value | keyvalue:customCompare; let myIndex1 = index; let isFirst1 = first; let isLast1 = last">
-					<ng-container *ngIf="myIndex == i && myIndex1 == j">
-						<h3 [innerHTML]="key.key.toString()"></h3>
-						<p [innerHTML]="estimateEnums[key.key.toString()][key2.key.toString()]"></p>
+</article>
+
+<ng-container *ngIf="visibility">
+	<article class="est-card est-text est-centered">
+		<ng-container *ngFor="let key of estimateEnums | keyvalue:customCompare; let myIndex = index; let isFirst = first; let isLast = last">
+			<ng-container *ngFor="let key2 of key.value | keyvalue:customCompare; let myIndex1 = index; let isFirst1 = first; let isLast1 = last">
+				<ng-container *ngIf="myIndex == i && myIndex1 == j">
+					<h3 [innerHTML]="key.key.toString()"></h3>
+					<p [innerHTML]="estimateEnums[key.key.toString()][key2.key.toString()]"></p>
+					
+					<section>
 						<ng-container *ngIf="!isFirst || !isFirst1">
 							<button class="est-button est-text" (click)="prevEntry(isFirst1)">prev</button>
 						</ng-container>
@@ -22,27 +26,46 @@
 						<ng-container *ngIf="isLast && isLast1">
 							<button class="est-button est-text" (click)="getYearstoFI(key.key.toString(), key2.key.toString(),input.value)">submit</button>
 						</ng-container>
-					</ng-container>
+					</section>
+
 				</ng-container>
 			</ng-container>
-		</section>
-	</ng-container>
-
-<ng-container *ngIf="!visibility && dispEstimate">
-	<article class="">
-		<section class="idp-card est-card est-text">
-			<div class="est-card_row">
-				<ng-container *ngFor="let item of dispEstimate | keyvalue">
-					<div class="est-card_column" [innerHTML]="item.value"></div>
-				</ng-container>
-			</div>
-		</section>
-		<section class="">
-			<estimator-chart></estimator-chart>
-		</section>
+		</ng-container>
 	</article>
 </ng-container>
 
-<section class="footer">
+<ng-container *ngIf="!visibility && dispEstimate">
+	<article>
+		<section class="idp-card est-card est-text">
+			<div class="est-card_row">
+				<ng-container *ngFor="let item of dispEstimate">
+					<div class="est-card_column">
+						<div class="" [innerHTML]="item[0]"></div>
+						<div class="est-text_xxlarge est-bold" [innerHTML]="item[1]"></div>
+					</div>
+				</ng-container>
+			</div>
+		</section>
+		<section class="idp-card est-card est-text">
+			<div class="est-card_row">
+				<ng-container *ngFor="let item of decreasedYFI">
+					<div class="est-card_column">
+						<div class="" [innerHTML]="item[0]"></div>
+						<div class="est-text_xxlarge est-bold" [innerHTML]="item[1]"></div>
+					</div>
+				</ng-container>
+			</div>
+		</section>
+		<section>
+			<estimator-chart></estimator-chart>
+		</section>
+		<section>
+			<app-footer></app-footer>
+		</section>
+	</article>
+</ng-container>
+<ng-container *ngIf="visibility">
+<article class="footer" style="position: fixed;">
 	<app-footer></app-footer>
- </section>
+</article>
+</ng-container>
