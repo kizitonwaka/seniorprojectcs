@@ -1,13 +1,10 @@
-import { Component, OnInit, OnChanges, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnChanges, OnDestroy, Output, EventEmitter } from '@angular/core';
 
-import { Subject, combineLatest } from 'rxjs';
-import { map, tap, takeUntil, filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { Estimate, EstimateInterface } from '../../../common-estimator/models/estimator.model';
-import { EstimatorService } from '../../../common-estimator/services/estimator/estimator.service';
 import * as EstimateEnums from '../../../common-estimator/enums/estimate.enums';
 import { CurrencyUtil } from '../../../common-estimator/utils/currency/currency.util';
-import { PercentUtil } from '../../../common-estimator/utils/percent/percent.util'
 
 
 @Component({
@@ -17,12 +14,14 @@ import { PercentUtil } from '../../../common-estimator/utils/percent/percent.uti
 })
 export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private ngUnsubscribe = new Subject();
-	private estimates: Estimate[];
 	private myEstimate: EstimateInterface;
 	private newEstimate: Estimate;
 	private newEstimate2: Estimate;
 	private newEstimate3: Estimate;
 	private newEstimate4: Estimate;
+
+	@Output()
+	outputEstimate : EventEmitter <Estimate> = new EventEmitter <Estimate>(undefined)
 
 	/**
 	 * notice we are using plain objects
@@ -35,6 +34,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private estimateEnums = EstimateEnums;
 	private screenVal: any;
 	private arr = new Array();
+	private exportEstimate: Estimate;
 
 	private isLoggedIn: boolean;
 	public progress: number = 0;
@@ -48,18 +48,13 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	public visibility = true;
 	decreasedYFI = new Array();
 
-	constructor(private estimatorService: EstimatorService) { }
+	constructor() { }
 
 	ngOnInit() {
-		this.initEstimates();
+		this.getEntries();
 	}
 
 	ngOnChanges() {
-		alert("ngOnChanges")
-		if(this.estimates)
-			this.estimates = this.estimates.splice(0);
-		console.log('onchages: ', this.estimates)
-		console.log(this.estimates)
 	}
 
 	ngOnDestroy() {
@@ -71,9 +66,9 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	private nextEntry(index, index2, input, islast?, submit?) {
-		if(!input || input < 0){
-			alert("Invalid Entry")
-			return;
+		if(!input || input ==''){
+			//alert("Invalid Entry")
+			//return;
 		}
 		this.myEstimate[index][index2] = input;
 		if(submit) {
@@ -105,10 +100,13 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		//this is needed to keep order of elements in markup since keys are complex types
 		return 0;
 	}
+	public myEmitter() {
+		this.outputEstimate.emit(this.exportEstimate);
+	}
 	private getYearstoFI(index, index2, input){
-		if(!input || input < 0){
-			alert("Invalid Entry")
-			return;
+		if(!input || input == ''){
+			//alert("Invalid Entry")
+			//return;
 		}
 		this.progress++;
 		this.nextEntry(index,index2,input,true,true)
@@ -116,6 +114,8 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.visibility = false;
 		//initial
 		this.newEstimate = new Estimate(this.myEstimate);
+		var myEstimate2 = JSON.parse(JSON.stringify(this.myEstimate))
+		this.exportEstimate = new Estimate(myEstimate2);
 		this.dispEstimate = this.getDispEstimate(this.newEstimate);
 
 		//5% more
@@ -174,7 +174,11 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	private getEntries() {
 		this.myEstimate = {
 			Demographics: {
-				Age: 41
+				Age: 41,
+				Sex: 'M',
+				MaritalStatus: 'married',
+				HouseHoldSize: 5,
+				State: 'KY',
 			},
 			Espenses: {
 				ExpenseTotal: 35000
@@ -210,26 +214,5 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		while(end < start + ms) {
 		  end = new Date().getTime();
 	   }
-	 }
-	private initEstimates() {
-			const subject = this.estimatorService.all();
-			//get previous data
-			combineLatest(
-				subject.SalEstimate$
-			).pipe(
-			takeUntil(this.ngUnsubscribe)
-			).subscribe(([data]) => {
-				this.estimates = data;
-			}),
-			map(([SalEstimate]) => {
-			const estimateState = {
-				estimatesList: SalEstimate
-			}
-			this.estimates = estimateState.estimatesList
-			});
-
-			//collect new data
-			this.getEntries();
-	}	
-
+	 }	
 }

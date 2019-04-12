@@ -19,7 +19,7 @@
 						<ng-container *ngIf="!isFirst || !isFirst1">
 							<button class="est-button est-text" (click)="prevEntry(isFirst1)">prev</button>
 						</ng-container>
-						<input #input class="est-input" type="number">
+						<input #input class="est-input" type="text">
 						<ng-container *ngIf="!isLast || !isLast1">
 							<button class="est-button est-text" (click)="nextEntry(key.key.toString(), key2.key.toString(),input.value, isLast1)" (keyup)="nextEntry1(input.value)">next</button>
 						</ng-container>
@@ -57,7 +57,7 @@
 			</div>
 		</section>
 		<section>
-			<estimator-chart></estimator-chart>
+			<estimator-chart [importedEstimate]="exportEstimate" (outputEstimate)='getEstimate($event)'></estimator-chart>
 		</section>
 		<section>
 			<app-footer></app-footer>

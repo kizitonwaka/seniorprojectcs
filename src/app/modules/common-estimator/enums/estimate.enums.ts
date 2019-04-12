@@ -1,19 +1,23 @@
 export enum Demographics {
-    Age = "age"
+    Age = "age",
+    Sex = "sex (M, F or X)",
+    MaritalStatus = "marital status (e.g single, married, divorced, separated, widowed)",
+    HouseHoldSize = "number of persons in your household",
+    State = "state of residence (enter MS for Mississippi etc.)",
 };
 
 export enum Espenses {
-    ExpenseTotal = "total of expenses"
+    ExpenseTotal = "total of expenses per year"
 };
 
 export enum Investments {
-    SumofInvestments = "sum of investments"
+    SumofInvestments = "sum of investments portfolio"
 };
 
 export enum Factors {
-    ExpectedReturn = "expected return on investments",
-    CurrentSavingsBalance = "balance in savings account",
-    AnnualSalary = "annual salary",
-    SafeWithdrawalRate = "safe withdrawal rate",
-    RetirementEspense = "retirement expense",
+    ExpectedReturn = "expected return on investments (e.g. enter 5 for 5%",
+    CurrentSavingsBalance = "current balance in savings account",
+    AnnualSalary = "yearly salary",
+    SafeWithdrawalRate = "safe withdrawal rate (at retirement. typically 4% or 5%)",
+    RetirementEspense = "retirement expense (expense per year during retirement)",
 };

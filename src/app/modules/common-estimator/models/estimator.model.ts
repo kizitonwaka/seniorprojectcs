@@ -1,12 +1,10 @@
 import { BehaviorSubject } from "rxjs/internal/BehaviorSubject";
-import { forEach } from "@angular/router/src/utils/collection";
-import * as Enum from "../enums/estimate.enums";
 import { OnChanges } from "@angular/core";
 
 //import { EstimateInterface } from '../interfaces/estimate-interface'
 
 export interface EstimateResponse {
-    Estimates: Array<EstimateInterface>;
+    JSONEstimates: Array<EstimateInterface>;
 }
 
 export interface SalEstimateResponse {
@@ -15,7 +13,11 @@ export interface SalEstimateResponse {
 
 export interface EstimateInterface {
     Demographics: {
-        Age: number
+        Age: number,
+        Sex: string,
+        MaritalStatus: string,
+        HouseHoldSize: number,
+        State: string,
     },
     Espenses: {
         ExpenseTotal: number
@@ -36,7 +38,11 @@ export class Estimate implements  EstimateInterface, OnChanges{
     ngOnChanges(){
     }
     Demographics: {
-        Age: number
+        Age: number,
+        Sex: string,
+        MaritalStatus: string,
+        HouseHoldSize: number,
+        State: string,
     };
     Espenses: {
         ExpenseTotal: number
@@ -186,7 +192,11 @@ private NPER (Rate, Pmt, PV, FV, Type) {
 
 new Estimate ({
     Demographics: {
-        Age: 24
+        Age: 41,
+        Sex: 'M',
+        MaritalStatus: 'married',
+        HouseHoldSize: 5,
+        State: 'KY',
     },
     Espenses: {
         ExpenseTotal: 35000
