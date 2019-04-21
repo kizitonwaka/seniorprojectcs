@@ -6,7 +6,7 @@ export enum Demographics {
     State = "state of residence (enter MS for Mississippi etc.)",
 };
 
-export enum Espenses {
+export enum Expenses {
     ExpenseTotal = "total of expenses per year"
 };
 
@@ -19,5 +19,5 @@ export enum Factors {
     CurrentSavingsBalance = "current balance in savings account",
     AnnualSalary = "yearly salary",
     SafeWithdrawalRate = "safe withdrawal rate (at retirement. typically 4% or 5%)",
-    RetirementEspense = "retirement expense (expense per year during retirement)",
+    RetirementExpense = "retirement expense (expense per year during retirement)",
 };

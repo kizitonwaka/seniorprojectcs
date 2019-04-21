@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import {ProgressBarModule} from "angular-progress-bar";
 
@@ -15,24 +16,21 @@ import { EstimatorComponent } from './modules/estimator/components/estimator/est
 import { EstimatorChartComponent } from './modules/estimator/components/estimator-chart/estimator-chart.component';
 
 const appRoutes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
-  { path: 'estimator', component: EstimatorComponent },
-  { path: 'home', component: HomeComponent },
-  /*{ path: 'hero/:id',      component: HeroDetailComponent },
   {
-    path: 'heroes',
-    component: HeroListComponent,
-    data: { title: 'Heroes List' }
+    path: '', redirectTo: '/home', pathMatch: 'full' },
+  {
+    path: 'estimator',
+    component: EstimatorComponent
   },
-  { path: '',
-    redirectTo: '/heroes',
-    pathMatch: 'full'
-  },
-  { path: '**', component: PageNotFoundComponent }*/
+  {
+    path: 'home',
+    component: HomeComponent
+  }
 ];
 
 @NgModule({
   imports: [
+    HttpClientModule,
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
@@ -41,6 +39,7 @@ const appRoutes: Routes = [
     BrowserModule,
     ProgressBarModule
   ],
+  exports: [RouterModule],
   declarations: [
     AppComponent,
     HomeComponent,

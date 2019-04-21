@@ -48,11 +48,13 @@
 		</section>
 		<section class="idp-card est-card est-text">
 			<div class="est-card_row">
-				<ng-container *ngFor="let item of decreasedYFI">
-					<div class="est-card_column">
-						<div class="" [innerHTML]="item[0]"></div>
-						<div class="est-text_xxlarge est-bold" [innerHTML]="item[1]"></div>
-					</div>
+				<ng-container *ngIf="decreasedYFI != undefined">
+					<ng-container *ngFor="let item of decreasedYFI">
+						<div class="est-card_column">
+							<div class="" [innerHTML]="item[0]"></div>
+							<div class="est-text_xxlarge est-bold" [innerHTML]="item[1]"></div>
+						</div>
+					</ng-container>
 				</ng-container>
 			</div>
 		</section>

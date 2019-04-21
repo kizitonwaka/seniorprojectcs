@@ -1,87 +1,29 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs/internal/observable/of';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Estimate } from '../../models/estimator.model';
 import { EstimateInterface, SalEstimateResponse, EstimateResponse } from '../../models/estimator.model';
-
+import {HttpClient} from '@angular/common/http'
 @Injectable({
 	providedIn: 'root'
 })
 export class EstimatorService {
-private estimates$ = new BehaviorSubject<Estimate[]>(undefined);
 
-private subject: SalEstimateResponse = {
-	SalEstimate$: this.estimates$
+uri = 'http://localhost:4000/estimate';
+
+  constructor(private http: HttpClient) { }
+
+  addEstimate(obj) {
+    console.log(JSON.stringify(obj));
+    this.http.post(`${this.uri}/add`, obj)
+        .subscribe(res => console.log('Done: '+JSON.stringify(obj)));
+  }
+private getEstimates(est) {
+	let myEstimates = est.map((obj) => new Estimate(obj));
+	return myEstimates;
 }
-
-constructor() { }
-
-private getFilteredEstimates(est: EstimateResponse) {
-	const estList = est.JSONEstimates//.filter(obj => obj.Demographics[filter.toString()] === filterValue);
-	let myEstimates = estList.map((obj) => new Estimate(obj));
-	this.estimates$.next(myEstimates)
-}
-public all() {
-	of({
-		"JSONEstimates": [
-			{
-				"Demographics":{
-					"Age": 26,
-					"Sex": "M",
-					"MaritalStatus": "single",
-					"HouseHoldSize": 3,
-					"State": "KY"
-				},
-				"Espenses": {
-					"ExpenseTotal": 40000
-				},
-				"Investments": {
-					"SumofInvestments": 0
-				},
-				"Factors": {
-					"ExpectedReturn": 0,
-					"CurrentSavingsBalance": 30000,
-					"AnnualSalary": 105000,
-					"SafeWithdrawalRate": 4,
-					"RetirementEspense": 45000
-				}
-			
-			},
-			{
-				"Demographics":{
-					"Age": 22,
-					"Sex": "M",
-					"MaritalStatus": "single",
-					"HouseHoldSize": 1,
-					"State": "KY"
-
-				},
-				"Espenses": {
-					"ExpenseTotal": 40000
-				},
-				"Investments": {
-					"SumofInvestments": 35000
-				},
-				"Factors": {
-					"ExpectedReturn": 5,
-					"CurrentSavingsBalance": 30000,
-					"AnnualSalary": 95000,
-					"SafeWithdrawalRate": 4,
-					"RetirementEspense": 40000
-				}
-			
-			}
-		]
-	})
-	.subscribe((response : EstimateResponse) => {
-		if(true/*loggedIn*/) {
-			this.getFilteredEstimates(response);
-		}
-		
-	}, (error) => {
-		console.log(error);
-	})
-		console.log(this.estimates$.getValue)
-		return this.subject
+public all():Observable<Object>{
+	return this.http.get(`${this.uri}`)
 	}
 }

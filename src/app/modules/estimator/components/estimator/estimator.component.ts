@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { Estimate, EstimateInterface } from '../../../common-estimator/models/estimator.model';
 import * as EstimateEnums from '../../../common-estimator/enums/estimate.enums';
 import { CurrencyUtil } from '../../../common-estimator/utils/currency/currency.util';
+import { EstimatorService } from 'src/app/modules/common-estimator/services/estimator/estimator.service';
 
 
 @Component({
@@ -48,7 +49,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	public visibility = true;
 	decreasedYFI = new Array();
 
-	constructor() { }
+	constructor(private estimatorService: EstimatorService) { }
 
 	ngOnInit() {
 		this.getEntries();
@@ -67,8 +68,8 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 
 	private nextEntry(index, index2, input, islast?, submit?) {
 		if(!input || input ==''){
-			//alert("Invalid Entry")
-			//return;
+			alert("Invalid Entry")
+			return;
 		}
 		this.myEstimate[index][index2] = input;
 		if(submit) {
@@ -105,11 +106,13 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	}
 	private getYearstoFI(index, index2, input){
 		if(!input || input == ''){
-			//alert("Invalid Entry")
-			//return;
+			alert("Invalid Entry")
+			return;
 		}
 		this.progress++;
 		this.nextEntry(index,index2,input,true,true)
+		
+		this.estimatorService.addEstimate(this.myEstimate)
 		//get years to fi and other values here
 		this.visibility = false;
 		//initial
@@ -119,27 +122,26 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.dispEstimate = this.getDispEstimate(this.newEstimate);
 
 		//5% more
-		this.myEstimate.Espenses.ExpenseTotal 
-			= ((this.myEstimate.Espenses.ExpenseTotal / 
+		this.myEstimate.Expenses.ExpenseTotal 
+			= ((this.myEstimate.Expenses.ExpenseTotal / 
 			this.myEstimate.Factors.AnnualSalary)-0.05 )*this.myEstimate.Factors.AnnualSalary;
 		this.newEstimate2 = new Estimate(this.myEstimate);
 		this.dispEstimate2 = this.getDispEstimateIncrease(this.newEstimate,5);
 		
 		//7% more
-		this.myEstimate.Espenses.ExpenseTotal 
-			= ((this.myEstimate.Espenses.ExpenseTotal / 
+		this.myEstimate.Expenses.ExpenseTotal 
+			= ((this.myEstimate.Expenses.ExpenseTotal / 
 			this.myEstimate.Factors.AnnualSalary)-0.07 )*this.myEstimate.Factors.AnnualSalary;
 		this.newEstimate3 = new Estimate(this.myEstimate);
 		this.dispEstimate3 = this.getDispEstimateIncrease(this.newEstimate,7);
 		
 		//10% more
-		this.myEstimate.Espenses.ExpenseTotal 
-			= ((this.myEstimate.Espenses.ExpenseTotal / 
+		this.myEstimate.Expenses.ExpenseTotal 
+			= ((this.myEstimate.Expenses.ExpenseTotal / 
 			this.myEstimate.Factors.AnnualSalary)-0.1 )*this.myEstimate.Factors.AnnualSalary;
 		this.newEstimate4 = new Estimate(this.myEstimate);
 		this.dispEstimate4 = this.getDispEstimateIncrease(this.newEstimate,10);
 		this.decreasedYFI.push(this.dispEstimate2, this.dispEstimate3, this.dispEstimate4);
-		console.log(this.decreasedYFI)
 	}
 
 	private getDispEstimate (est: Estimate){
@@ -151,7 +153,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 			let dispEstimate = new Array();
 			let temp1: any = ['Annual Salary', CurrencyUtil.format(est.Factors.AnnualSalary)];
 			let temp2: any = ['Yearly Savings', CurrencyUtil.format(est.yearlyContribution)];
-			let temp3: any = ['Retirement Expenses',CurrencyUtil.format(est.Factors.RetirementEspense)];
+			let temp3: any = ['Retirement Expenses',CurrencyUtil.format(est.Factors.RetirementExpense)];
 			let temp4: any = ['Projected Balance at Retirement', CurrencyUtil.format(est.FINumber)];
 			let temp5: any = ['Age of financial independence',retirementAge];
 			dispEstimate.push(temp1,temp2,temp3,temp4,temp5)
@@ -180,7 +182,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 				HouseHoldSize: 5,
 				State: 'KY',
 			},
-			Espenses: {
+			Expenses: {
 				ExpenseTotal: 35000
 			},
 			Investments: {
@@ -191,7 +193,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 				CurrentSavingsBalance: 100000,
 				AnnualSalary: 100,
 				SafeWithdrawalRate: 4,
-				RetirementEspense: 40000
+				RetirementExpense: 40000
 			}
 		};
 		Object.entries(this.estimateEnums).forEach(([key,value]) => {

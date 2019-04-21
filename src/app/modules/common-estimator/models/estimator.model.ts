@@ -19,7 +19,7 @@ export interface EstimateInterface {
         HouseHoldSize: number,
         State: string,
     },
-    Espenses: {
+    Expenses: {
         ExpenseTotal: number
     },
     Investments: {
@@ -30,7 +30,7 @@ export interface EstimateInterface {
         CurrentSavingsBalance: number,
         AnnualSalary: number,
         SafeWithdrawalRate: number,
-        RetirementEspense: number;
+        RetirementExpense: number;
     }
 }
 
@@ -44,7 +44,7 @@ export class Estimate implements  EstimateInterface, OnChanges{
         HouseHoldSize: number,
         State: string,
     };
-    Espenses: {
+    Expenses: {
         ExpenseTotal: number
     };
     Investments: {
@@ -55,7 +55,7 @@ export class Estimate implements  EstimateInterface, OnChanges{
         CurrentSavingsBalance: number;
         AnnualSalary: number;
         SafeWithdrawalRate: number;
-        RetirementEspense: number;
+        RetirementExpense: number;
     }
 
     //additional class properties
@@ -65,29 +65,29 @@ export class Estimate implements  EstimateInterface, OnChanges{
     /** notice the cleaner, more readable constructor?*/
     constructor (est: EstimateInterface) {
         this.Demographics = est.Demographics;
-        this.Espenses = est.Espenses;
+        this.Expenses = est.Expenses;
         this.Investments = est.Investments;
         this.Factors = est.Factors;
         this.YearlyContribution = this.yearlyContribution;
     } 
 
-    public get yearlyEspenses(): number {
+    public get yearlyExpenses(): number {
         let sum = 0;
-        Object.values(this.Espenses).forEach((value)=> { sum += value })
+        Object.values(this.Expenses).forEach((value)=> { sum += value })
         return sum;
     }
 
     public get FINumber() {
-        if(this.Factors.RetirementEspense !== undefined){
-            console.log('FINUMBER',this.Factors.RetirementEspense / (this.Factors.SafeWithdrawalRate/100))
-            return this.Factors.RetirementEspense / (this.Factors.SafeWithdrawalRate/100);
+        if(this.Factors.RetirementExpense !== undefined){
+            console.log('FINUMBER',this.Factors.RetirementExpense / (this.Factors.SafeWithdrawalRate/100))
+            return this.Factors.RetirementExpense / (this.Factors.SafeWithdrawalRate/100);
         }
-        return this.yearlyEspenses / (this.Factors.SafeWithdrawalRate/100);
+        return this.yearlyExpenses / (this.Factors.SafeWithdrawalRate/100);
     }
 
     public get yearlyContribution(): number {
-        console.log('cont',this.Factors.AnnualSalary - this.yearlyEspenses)
-        return this.Factors.AnnualSalary - this.yearlyEspenses;
+        console.log('cont',this.Factors.AnnualSalary - this.yearlyExpenses)
+        return this.Factors.AnnualSalary - this.yearlyExpenses;
     }
 
     public get investmentPortfolio(): number {
@@ -198,7 +198,7 @@ new Estimate ({
         HouseHoldSize: 5,
         State: 'KY',
     },
-    Espenses: {
+    Expenses: {
         ExpenseTotal: 35000
     },
     Investments: {
@@ -209,6 +209,6 @@ new Estimate ({
         CurrentSavingsBalance: 100000,
         AnnualSalary: 100000,
         SafeWithdrawalRate: 4,
-        RetirementEspense: 40000
+        RetirementExpense: 40000
     }
 })
