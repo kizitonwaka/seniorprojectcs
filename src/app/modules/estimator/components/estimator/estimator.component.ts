@@ -112,9 +112,10 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.progress++;
 		this.nextEntry(index,index2,input,true,true)
 		
-		this.estimatorService.addEstimate(this.myEstimate)
-		//get years to fi and other values here
+		//add estimate interface to MongoDB
+		//this.estimatorService.addEstimate(this.myEstimate)
 		this.visibility = false;
+		//get years to fi and other values here
 		//initial
 		this.newEstimate = new Estimate(this.myEstimate);
 		var myEstimate2 = JSON.parse(JSON.stringify(this.myEstimate))

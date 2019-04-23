@@ -46,8 +46,10 @@ export class EstimatorChartComponent implements OnInit, OnDestroy{
     constructor(private estimatorService: EstimatorService) { }
 
     async ngOnInit() {
-        this.userSex = this.importedEstimate.Demographics.Sex
+        this.userSex = this.importedEstimate.Demographics.Sex;
+        this.userAge = parseInt(this.importedEstimate.Demographics.Age.toString())
         this.userRetirementAge = this.userAge + parseInt(this.importedEstimate.yearsToFI.toString());
+        alert(this.userRetirementAge)
         this.userSalary = parseFloat(this.importedEstimate.Factors.AnnualSalary.toString());
         this.userState = this.importedEstimate.Demographics.State;
         this.userStatus = this.importedEstimate.Demographics.MaritalStatus;
@@ -60,8 +62,7 @@ export class EstimatorChartComponent implements OnInit, OnDestroy{
                 this.filter(myEstList);
                 this.plotChart();
             }
-        }
-        
+        } 
     }
 
     ngOnDestroy() {
@@ -153,55 +154,58 @@ export class EstimatorChartComponent implements OnInit, OnDestroy{
             sex = "Men";
         } else if (this.userSex === "F") {
             sex = "Women";
+        } else if (this.userSex === "X") {
+            sex = "X sex"
         }
         var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ['You vs other '+`${sex}`,
-                    'You vs people earning '+`${CurrencyUtil.format(this.userSalary - 5000)}`+' - '+`${CurrencyUtil.format(this.userSalary + 5000)}`+' per year',
+                    //'You vs people earning '+`${CurrencyUtil.format(this.userSalary - 5000)}`+' - '+`${CurrencyUtil.format(this.userSalary + 5000)}`+' per year',
                     'You vs people from '+`${this.userState}`,
-                    'You vs '+`${this.userStatus}`+' people',
-                    'You vs people with '+`${this.userHHSize - 1}`+' - '+`${this.userHHSize + 1}` +' persons in their household'],
+                    //'You vs '+`${this.userStatus}`+' people',
+                    //'You vs people with '+`${this.userHHSize - 1}`+' - '+`${this.userHHSize + 1}` +' persons in their household'
+                ],
             datasets: [{
                 label: 'You',
                 data: [this.userRetirementAge, this.userRetirementAge,
-                    this.userRetirementAge, this.userRetirementAge,
-                    this.userRetirementAge
+                    //this.userRetirementAge, this.userRetirementAge,
+                    //this.userRetirementAge
                 ],
                 backgroundColor: [
                     'rgba(54, 162, 235, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)'
+                    //'rgba(54, 162, 235, 0.2)',
+                    //'rgba(54, 162, 235, 0.2)',
+                    //'rgba(54, 162, 235, 0.2)'
                 ],
                 borderColor: [
                     'rgba(54, 162, 235, 1)',
                     'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)'
+                    //'rgba(54, 162, 235, 1)',
+                    //'rgba(54, 162, 235, 1)',
+                    //'rgba(54, 162, 235, 1)'
                 ],
                 borderWidth: 0.5
             },{
             label: 'Others',
             data: [
                 this.bySexAvg, this.bySalaryAvg,
-                this.byStateAvg, this.byStatusAvg,
-                this.byHHSizeAvg
+                //this.byStateAvg, this.byStatusAvg,
+                //this.byHHSizeAvg
             ],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(255, 99, 132, 0.2)',
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(255, 99, 132, 0.2)',
+                //'rgba(255, 99, 132, 0.2)',
+                //'rgba(255, 99, 132, 0.2)',
+                //'rgba(255, 99, 132, 0.2)',
             ],
             borderColor: [
                 'rgba(255, 99, 132, 1)',
                 'rgba(255, 99, 132, 1)',
-                'rgba(255, 99, 132, 1)',
-                'rgba(255, 99, 132, 1)',
+                //'rgba(255, 99, 132, 1)',
+                //'rgba(255, 99, 132, 1)',
             ],
             borderWidth: 0.5
         }]
