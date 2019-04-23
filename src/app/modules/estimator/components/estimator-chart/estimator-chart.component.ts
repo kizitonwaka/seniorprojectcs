@@ -1,10 +1,8 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Chart } from 'chart.js';
-import { Estimate, EstimateInterface } from 'src/app/modules/common-estimator/models/estimator.model';
+import { Estimate } from 'src/app/modules/common-estimator/models/estimator.model';
 import { EstimatorService } from '../../../common-estimator/services/estimator/estimator.service';
-import { combineLatest, Subject } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
-import { CurrencyUtil } from '../../../common-estimator/utils/currency/currency.util';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'estimator-chart',
@@ -12,200 +10,105 @@ import { CurrencyUtil } from '../../../common-estimator/utils/currency/currency.
     styleUrls: ['./estimator-chart.component.scss']
 })
 export class EstimatorChartComponent implements OnInit, OnDestroy{
-    private estimates: EstimateInterface[];
-
     @Input()
     importedEstimate: Estimate = undefined;
     
     private userRetirementAge: number;
-    private userSalary: number;
     private userState: string;
-    private userStatus: string;
-    private userHHSize: number;
     private userAge: number;
     private userSex: string;
     private ngUnsubscribe = new Subject();
 
-    private filteredByAge: Estimate[];
-    private filteredBySex: Estimate[];
-    private filteredBySalary: Estimate[];
-    private filteredByState: Estimate[];
-    private filteredByMStatus: Estimate[];
-    private filteredByHHSize: Estimate[];
-
     private bySexAvg: number;
-    private byAgeAvg: number;
-    private bySalaryAvg: number;
     private byStateAvg: number;
-    private byStatusAvg: number;
-    private byHHSizeAvg: number;
 
     private avgUSMale = 59.62; //In 2017, 22,295,155 retired men lived in the United States
     private avgUSFemale = 60.11; //In 2017, 26,965,901 retired women lived in the United States
+    stateAverages = {
+        AK: 61, WV: 61,
+        AL: 62, AR: 62, KY: 62, LA: 62, MI: 62, NM: 62, OK: 62,
+        AZ: 63, DE: 63, GA: 63, IN: 63, ME: 63, MS: 63, MO: 63, NV: 63, NC: 63, OH: 63, OR: 63, SC: 63,
+        CA: 64, FL: 64, ID: 64, IL: 64, MT: 64, NY: 64, PA: 64, TN: 64, WA: 64, WI: 64, WY: 64,
+        CO: 65, CT: 65, IO: 65, KS: 65, MD: 65, MN: 65, NE: 65, NH: 65, NJ: 65, ND: 65, RI: 65, TX: 65, UT: 65, VT: 65, VA: 65,
+        HI: 66, MA: 66, SD: 66,
+        DC: 67
+    }
 
     constructor(private estimatorService: EstimatorService) { }
 
-    async ngOnInit() {
-        this.userSex = this.importedEstimate.Demographics.Sex;
+    ngOnInit() {
+        this.userSex = this.importedEstimate.Demographics.Sex
         this.userAge = parseInt(this.importedEstimate.Demographics.Age.toString())
         this.userRetirementAge = this.userAge + parseInt(this.importedEstimate.yearsToFI.toString());
-        alert(this.userRetirementAge)
-        this.userSalary = parseFloat(this.importedEstimate.Factors.AnnualSalary.toString());
         this.userState = this.importedEstimate.Demographics.State;
-        this.userStatus = this.importedEstimate.Demographics.MaritalStatus;
-        this.userHHSize = parseFloat(this.importedEstimate.Demographics.HouseHoldSize.toString());
-        var x;
-        if (x = await this.getPrevEstimates()) {
-            var myEstList = x.map((obj) => new Estimate(obj));
 
-            if(myEstList.length > 0){
-                this.filter(myEstList);
-                this.plotChart();
-            }
-        } 
+        const stateAbbreviations = [
+            'AL','AK','AS','AZ','AR','CA','CO','CT','DE','DC','FM','FL','GA',
+            'GU','HI','ID','IL','IN','IA','KS','KY','LA','ME','MH','MD','MA',
+            'MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND',
+            'MP','OH','OK','OR','PW','PA','PR','RI','SC','SD','TN','TX','UT',
+            'VT','VI','VA','WA','WV','WI','WY'
+        ];
+        var state = this.userState.toUpperCase()
+        var state = stateAbbreviations.find(el => 
+            state == el);
+        if(this.userSex.toLocaleLowerCase() == 'm' ||
+        this.userSex.toLocaleLowerCase() == 'f' ||
+        this.userSex.toLocaleLowerCase() == 'x' && 
+        state != undefined){
+            this.byStateAvg = this.stateAverages[this.userState.toString().toLocaleUpperCase()];
+            this.plotChart();
+        }
     }
 
     ngOnDestroy() {
         this.ngUnsubscribe;
     }
 
-    private getPrevEstimates() :Promise<Object>{
-        return this.estimatorService.all().toPromise()
-    }
-
-    private filter(est) {
-        let avg = 0;
-        
-        //by sex
-        const estList = est.filter(obj => 
-            obj.Demographics.Sex === this.userSex
-        );
-        this.filteredBySex = estList;
-        this.filteredBySex.forEach(est => {
-            avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
-            console.log(avg);
-        })
-        this.bySexAvg = avg/this.filteredBySex.length;
-
-        //get avg us retirement by sex
-        switch (this.userSex){
-            case "F":
-                this.bySexAvg = (this.bySexAvg + this.avgUSFemale)/2;
-                break;
-            case "M":
-                this.bySexAvg = (this.bySexAvg + this.avgUSMale)/2;
-                break;
-            default: (this.avgUSFemale + this.avgUSMale)/2
-        }
-
-        //by salary
-        avg = 0;
-        const estList2 = est.filter(obj =>
-            obj.Factors.AnnualSalary >= this.userSalary - 5000 &&
-            obj.Factors.AnnualSalary <= this.userSalary + 5000)
-        this.filteredBySalary = estList2;
-        this.filteredBySalary.forEach(est => {
-            avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
-            console.log(avg);
-        })
-        this.bySalaryAvg = avg/this.filteredBySalary.length;
-
-        //by state
-        avg = 0;
-        const estList3 = est.filter(obj =>
-            obj.Demographics.State === this.userState
-        );
-        this.filteredByState = estList3;
-        this.filteredByState.forEach(est => {
-            avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
-            console.log(avg);
-        })
-        this.byStateAvg = avg/this.filteredByState.length;
-
-        //by marital status
-        avg = 0
-        const estList4 = est.filter(obj =>
-            obj.Demographics.MaritalStatus === this.userStatus)
-        this.filteredByMStatus = estList4
-        this.filteredByMStatus.forEach(est => {
-            avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
-            console.log(avg);
-        })
-        this.byStatusAvg = avg/this.filteredByMStatus.length;
-
-        //by household size
-        avg = 0;
-        const estList5 = est.filter(obj => 
-            obj.Demographics.HouseHoldSize >= this.userHHSize - 1 &&
-            obj.Demographics.HouseHoldSize <= this.userHHSize + 1
-        );
-        this.filteredByHHSize = estList5;
-        this.filteredByHHSize.forEach(est => {
-            avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
-            console.log(avg);
-        })
-        this.byHHSizeAvg = avg/this.filteredByHHSize.length;
-    }
-
     private plotChart() {
         var ctx = document.getElementById('myChart');
         var sex: string;
-        if (this.userSex === "M") {
+        if (this.userSex.toLocaleUpperCase() === "M") {
             sex = "Men";
-        } else if (this.userSex === "F") {
+            this.bySexAvg = this.avgUSMale
+        } else if (this.userSex.toLocaleUpperCase() === "F") {
             sex = "Women";
-        } else if (this.userSex === "X") {
+            this.bySexAvg = this.avgUSFemale
+        } else if (this.userSex.toLocaleUpperCase() === "X") {
             sex = "X sex"
         }
         var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ['You vs other '+`${sex}`,
-                    //'You vs people earning '+`${CurrencyUtil.format(this.userSalary - 5000)}`+' - '+`${CurrencyUtil.format(this.userSalary + 5000)}`+' per year',
-                    'You vs people from '+`${this.userState}`,
-                    //'You vs '+`${this.userStatus}`+' people',
-                    //'You vs people with '+`${this.userHHSize - 1}`+' - '+`${this.userHHSize + 1}` +' persons in their household'
+                    'You vs people from '+`${this.userState}`
                 ],
             datasets: [{
                 label: 'You',
-                data: [this.userRetirementAge, this.userRetirementAge,
-                    //this.userRetirementAge, this.userRetirementAge,
-                    //this.userRetirementAge
+                data: [this.userRetirementAge,
+                    this.userRetirementAge
                 ],
                 backgroundColor: [
                     'rgba(54, 162, 235, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
-                    //'rgba(54, 162, 235, 0.2)',
-                    //'rgba(54, 162, 235, 0.2)',
-                    //'rgba(54, 162, 235, 0.2)'
                 ],
                 borderColor: [
                     'rgba(54, 162, 235, 1)',
                     'rgba(54, 162, 235, 1)',
-                    //'rgba(54, 162, 235, 1)',
-                    //'rgba(54, 162, 235, 1)',
-                    //'rgba(54, 162, 235, 1)'
                 ],
                 borderWidth: 0.5
             },{
             label: 'Others',
             data: [
-                this.bySexAvg, this.bySalaryAvg,
-                //this.byStateAvg, this.byStatusAvg,
-                //this.byHHSizeAvg
+                this.bySexAvg, this.byStateAvg
             ],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(255, 99, 132, 0.2)',
-                //'rgba(255, 99, 132, 0.2)',
-                //'rgba(255, 99, 132, 0.2)',
-                //'rgba(255, 99, 132, 0.2)',
             ],
             borderColor: [
                 'rgba(255, 99, 132, 1)',
                 'rgba(255, 99, 132, 1)',
-                //'rgba(255, 99, 132, 1)',
-                //'rgba(255, 99, 132, 1)',
             ],
             borderWidth: 0.5
         }]

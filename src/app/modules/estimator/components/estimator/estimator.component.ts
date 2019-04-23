@@ -1,7 +1,5 @@
 import { Component, OnInit, OnChanges, OnDestroy, Output, EventEmitter } from '@angular/core';
-
 import { Subject } from 'rxjs';
-
 import { Estimate, EstimateInterface } from '../../../common-estimator/models/estimator.model';
 import * as EstimateEnums from '../../../common-estimator/enums/estimate.enums';
 import { CurrencyUtil } from '../../../common-estimator/utils/currency/currency.util';
@@ -24,6 +22,25 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	@Output()
 	outputEstimate : EventEmitter <Estimate> = new EventEmitter <Estimate>(undefined)
 
+	private userSalary: number;
+    private userStatus: string;
+	private userHHSize: number;
+	private userState: string;
+    private userSex: string;
+	
+	private response: any;
+	private bySexAvg: number;
+    private bySalaryAvg: number;
+    private byStateAvg: number;
+    private byStatusAvg: number;
+    private byHHSizeAvg: number;
+
+    private filteredBySex: Estimate[];
+    private filteredBySalary: Estimate[];
+    private filteredByState: Estimate[];
+    private filteredByMStatus: Estimate[];
+	private filteredByHHSize: Estimate[];
+	
 	/**
 	 * notice we are using plain objects
 	 * we don't want to show our user our data model
@@ -32,12 +49,12 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	public dispEstimate2 = new Array(); //5% more
 	public dispEstimate3 = new Array(); //7% more
 	public dispEstimate4 = new Array(); //10% more
+	public otherUsersdispEstimate = new Array(); //from site users
 	private estimateEnums = EstimateEnums;
 	private screenVal: any;
 	private arr = new Array();
 	private exportEstimate: Estimate;
 
-	private isLoggedIn: boolean;
 	public progress: number = 0;
 	public total=0;
 	private i = 0;
@@ -51,10 +68,13 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 
 	constructor(private estimatorService: EstimatorService) { }
 
-	ngOnInit() {
+	async ngOnInit() {
 		this.getEntries();
+        var res;
+        if (res = await this.getPrevEstimates()) {
+			this.response = res.map((obj) => new Estimate(obj));
+		}
 	}
-
 	ngOnChanges() {
 	}
 
@@ -62,6 +82,10 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.ngUnsubscribe
 	}
 
+	private getPrevEstimates() :Promise<Object>{
+        return this.estimatorService.all().toPromise()
+	}
+	
 	private updateProgressPercentage() {
 		this.progressPerc=Math.ceil((this.progress/this.total)*100)
 	}
@@ -113,13 +137,21 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.nextEntry(index,index2,input,true,true)
 		
 		//add estimate interface to MongoDB
-		//this.estimatorService.addEstimate(this.myEstimate)
+		this.estimatorService.addEstimate(this.myEstimate)
 		this.visibility = false;
 		//get years to fi and other values here
 		//initial
 		this.newEstimate = new Estimate(this.myEstimate);
-		var myEstimate2 = JSON.parse(JSON.stringify(this.myEstimate))
+		var myEstimate2:EstimateInterface = JSON.parse(JSON.stringify(this.myEstimate))
 		this.exportEstimate = new Estimate(myEstimate2);
+
+		//
+		this.userSalary = myEstimate2.Factors.AnnualSalary;
+    	this.userStatus = myEstimate2.Demographics.MaritalStatus;
+		this.userHHSize = myEstimate2.Demographics.HouseHoldSize;
+		this.userState = myEstimate2.Demographics.State;
+		this.userSex = myEstimate2.Demographics.Sex
+
 		this.dispEstimate = this.getDispEstimate(this.newEstimate);
 
 		//5% more
@@ -143,6 +175,10 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.newEstimate4 = new Estimate(this.myEstimate);
 		this.dispEstimate4 = this.getDispEstimateIncrease(this.newEstimate,10);
 		this.decreasedYFI.push(this.dispEstimate2, this.dispEstimate3, this.dispEstimate4);
+
+		if(this.response.length > 0){
+			this.filter(this.response);
+		}
 	}
 
 	private getDispEstimate (est: Estimate){
@@ -217,5 +253,107 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		while(end < start + ms) {
 		  end = new Date().getTime();
 	   }
-	 }	
+	 }
+	
+	 private filter(est) {
+        let avg = 0;
+		//by sex
+        const estList = est.filter(obj => 
+            obj.Demographics.Sex.toLocaleUpperCase() === this.userSex.toLocaleUpperCase()
+        );
+        this.filteredBySex = estList;
+        this.filteredBySex.forEach(est => {
+            avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
+            console.log(avg);
+        })
+        this.bySexAvg = avg/this.filteredBySex.length;
+
+        //by salary
+        avg = 0;
+        const estList2 = est.filter(obj =>
+            obj.Factors.AnnualSalary >= this.userSalary - 5000 &&
+            obj.Factors.AnnualSalary <= this.userSalary + 5000)
+        this.filteredBySalary = estList2;
+        this.filteredBySalary.forEach(est => {
+            avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
+            console.log(avg);
+        })
+        this.bySalaryAvg = avg/this.filteredBySalary.length;
+
+        //by state
+        avg = 0;
+        const estList3 = est.filter(obj =>
+            obj.Demographics.State.toLocaleUpperCase() === this.userState.toLocaleUpperCase()
+        );
+        this.filteredByState = estList3;
+        this.filteredByState.forEach(est => {
+            avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
+            console.log(avg);
+        })
+        this.byStateAvg = avg/this.filteredByState.length;
+
+        //by marital status
+        avg = 0
+        const estList4 = est.filter(obj =>
+			obj.Demographics.MaritalStatus.toLocaleUpperCase() === this.userStatus.toLocaleUpperCase()
+		)
+        this.filteredByMStatus = estList4
+        this.filteredByMStatus.forEach(est => {
+            avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
+            console.log(avg);
+        })
+        this.byStatusAvg = avg/this.filteredByMStatus.length;
+
+        //by household size
+        avg = 0;
+        const estList5 = est.filter(obj => 
+            obj.Demographics.HouseHoldSize >= this.userHHSize - 1 &&
+            obj.Demographics.HouseHoldSize <= this.userHHSize + 1
+        );
+        this.filteredByHHSize = estList5;
+        this.filteredByHHSize.forEach(est => {
+            avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
+            console.log(avg);
+        })
+		this.byHHSizeAvg = avg/this.filteredByHHSize.length;
+
+
+		var sex: string;
+        if (this.userSex.toLocaleUpperCase() === "M") {
+            sex = "Men";
+        } else if (this.userSex.toLocaleUpperCase() === "F") {
+            sex = "Women";
+        } else if (this.userSex.toLocaleUpperCase() === "X") {
+            sex = "X sex"
+        }
+		let temp1: any = ['Average Retirement Age of '+sex, this.bySexAvg];
+		let temp2: any = ['Average Retirement Age of People Earning '+`${CurrencyUtil.format(parseFloat(this.userSalary.toString()) - 5000)}`+' - '+`${CurrencyUtil.format(parseFloat(this.userSalary.toString()) + 5000)}`,
+						this.bySalaryAvg];
+		let temp3: any = ['Average Retirement Age of People from '+`${this.userState}`, this.byStateAvg];
+		let temp4: any = ['Average Retirement Age of '+`${this.userStatus}`+ ' People', this.byStatusAvg];
+		//this.otherUsersdispEstimate.push(temp1,temp2,temp3,temp4);
+		if (this.userSex.toLocaleLowerCase() == 'm'|| 
+			this.userSex.toLocaleLowerCase() == 'f'||
+			this.userSex.toLocaleLowerCase() == 'x' && this.filteredBySex.length > 0){
+			this.otherUsersdispEstimate.push(temp1);
+		}
+		if (this.userSalary > 0 && this.filteredBySalary.length > 0){
+			this.otherUsersdispEstimate.push(temp2);
+		}
+		if (this.userState && this.filteredByState.length > 0){
+			this.otherUsersdispEstimate.push(temp3);
+		}
+		if (this.userStatus.toLocaleUpperCase() == 'single'||
+			this.userStatus.toLocaleLowerCase() ==  'married'|| 
+			this.userStatus.toLocaleLowerCase() == 'divorced'|| 
+			this.userStatus.toLocaleLowerCase() == 'separated'||
+			this.userStatus.toLocaleLowerCase() == 'widowed' &&
+			this.filteredByMStatus.length > 0){
+			this.otherUsersdispEstimate.push(temp4);
+		}
+		if(this.otherUsersdispEstimate.length == 0){
+			this.otherUsersdispEstimate = undefined;
+		}
+		alert(this.otherUsersdispEstimate);
+    }	
 }

@@ -21,7 +21,7 @@
 						</ng-container>
 						<input #input class="est-input" type="text">
 						<ng-container *ngIf="!isLast || !isLast1">
-							<button class="est-button est-text" (click)="nextEntry(key.key.toString(), key2.key.toString(),input.value, isLast1)" (keyup)="nextEntry1(input.value)">next</button>
+							<button class="est-button est-text" (click)="nextEntry(key.key.toString(), key2.key.toString(),input.value, isLast1)">next</button>
 						</ng-container>
 						<ng-container *ngIf="isLast && isLast1">
 							<button class="est-button est-text" (click)="getYearstoFI(key.key.toString(), key2.key.toString(),input.value)">submit</button>
@@ -61,6 +61,20 @@
 		<section>
 			<estimator-chart [importedEstimate]="exportEstimate" (outputEstimate)='getEstimate($event)'></estimator-chart>
 		</section>
+		
+		<ng-container *ngIf="otherUsersdispEstimate != undefined">
+			<section class="idp-card est-card est-text">
+				<p>The data below is solely based on users that utilized this site</p>
+				<div class="est-card_row">
+					<ng-container *ngFor="let item of otherUsersdispEstimate">
+						<div class="est-card_column">
+							<div class="" [innerHTML]="item[0]"></div>
+							<div class="est-text_xxlarge est-bold" [innerHTML]="item[1]"></div>
+						</div>
+					</ng-container>
+				</div>
+			</section>
+		</ng-container>
 		<section>
 			<app-footer></app-footer>
 		</section>
