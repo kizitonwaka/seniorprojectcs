@@ -266,7 +266,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
             avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
             console.log(avg);
         })
-        this.bySexAvg = avg/this.filteredBySex.length;
+        this.bySexAvg = Math.round(avg/this.filteredBySex.length);
 
         //by salary
         avg = 0;
@@ -278,7 +278,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
             avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
             console.log(avg);
         })
-        this.bySalaryAvg = avg/this.filteredBySalary.length;
+        this.bySalaryAvg = Math.round(avg/this.filteredBySalary.length);
 
         //by state
         avg = 0;
@@ -290,7 +290,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
             avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
             console.log(avg);
         })
-        this.byStateAvg = avg/this.filteredByState.length;
+        this.byStateAvg = Math.round(avg/this.filteredByState.length);
 
         //by marital status
         avg = 0
@@ -302,7 +302,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
             avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
             console.log(avg);
         })
-        this.byStatusAvg = avg/this.filteredByMStatus.length;
+        this.byStatusAvg = Math.round(avg/this.filteredByMStatus.length);
 
         //by household size
         avg = 0;
@@ -315,7 +315,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
             avg += parseInt(est.yearsToFI.toString()) + parseInt(est.Demographics.Age.toString());
             console.log(avg);
         })
-		this.byHHSizeAvg = avg/this.filteredByHHSize.length;
+		this.byHHSizeAvg = Math.round(avg/this.filteredByHHSize.length);
 
 
 		var sex: string;
