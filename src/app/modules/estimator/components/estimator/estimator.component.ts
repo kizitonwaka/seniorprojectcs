@@ -23,22 +23,22 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	outputEstimate : EventEmitter <Estimate> = new EventEmitter <Estimate>(undefined)
 
 	private userSalary: number;
-    private userStatus: string;
+  private userStatus: string;
 	private userHHSize: number;
 	private userState: string;
-    private userSex: string;
+  private userSex: string;
 	
 	private response: any;
 	private bySexAvg: number;
-    private bySalaryAvg: number;
-    private byStateAvg: number;
-    private byStatusAvg: number;
-    private byHHSizeAvg: number;
+  private bySalaryAvg: number;
+  private byStateAvg: number;
+  private byStatusAvg: number;
+  private byHHSizeAvg: number;
 
-    private filteredBySex: Estimate[];
-    private filteredBySalary: Estimate[];
-    private filteredByState: Estimate[];
-    private filteredByMStatus: Estimate[];
+  private filteredBySex: Estimate[];
+  private filteredBySalary: Estimate[];
+  private filteredByState: Estimate[];
+  private filteredByMStatus: Estimate[];
 	private filteredByHHSize: Estimate[];
 	
 	/**
@@ -52,32 +52,36 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	public otherUsersdispEstimate = new Array(); //from site users
 	private estimateEnums = EstimateEnums;
 	private screenVal: any;
-	private arr = new Array();
-	private exportEstimate: Estimate;
+	private arr = new Array(); //temp array
+	private exportEstimate: Estimate; //estimate object to be sent to chart
 
+  //to calculate display percentage in our progress bar
 	public progress: number = 0;
-	public total=0;
-	private i = 0;
-	private j = 0;
+	public total=0;   //total inner properties of estimate interface
+	private i = 0;  //first property start
+	private j = 0;  //inner property start
 	private lastJ = new Array();
-	private myIndex=0;
+	private myIndex=0; 
 	private myIndex1=0;
 	private progressPerc = 1;
-	public visibility = true;
+	public visibility = true; //determines if text boxes and buttons are visible
 	decreasedYFI = new Array();
 
 	constructor(private estimatorService: EstimatorService) { }
 
-	async ngOnInit() {
+	async ngOnInit() { //async since we want to wait for data on inititalization
 		this.getEntries();
         var res;
+        //do we get previous data?
         if (res = await this.getPrevEstimates()) {
-			this.response = res.map((obj) => new Estimate(obj));
-		}
+          //if yes, turn response to array of estimate objects
+			    this.response = res.map((obj) => new Estimate(obj));
+		    }
 	}
 	ngOnChanges() {
 	}
 
+  //on page termination, unsubscribe
 	ngOnDestroy() {
 		this.ngUnsubscribe
 	}
@@ -90,6 +94,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		this.progressPerc=Math.ceil((this.progress/this.total)*100)
 	}
 
+  //determine where each collected data is store and what buttons are visible
 	private nextEntry(index, index2, input, islast?, submit?) {
 		if(!input || input ==''){
 			alert("Invalid Entry")
@@ -125,9 +130,13 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 		//this is needed to keep order of elements in markup since keys are complex types
 		return 0;
 	}
+  
+  //send estimate to chart here
 	public myEmitter() {
 		this.outputEstimate.emit(this.exportEstimate);
 	}
+  
+  //get years to FI
 	private getYearstoFI(index, index2, input){
 		if(!input || input == ''){
 			alert("Invalid Entry")
@@ -210,6 +219,8 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 			return info;
 		}	
 	}
+  
+  //init estimate, to take care of 'undefined' issues 
 	private getEntries() {
 		this.myEstimate = {
 			Demographics: {
@@ -255,6 +266,7 @@ export class EstimatorComponent implements OnInit, OnDestroy, OnChanges {
 	   }
 	 }
 	
+  //make of filters here
 	 private filter(est) {
         let avg = 0;
 		//by sex
