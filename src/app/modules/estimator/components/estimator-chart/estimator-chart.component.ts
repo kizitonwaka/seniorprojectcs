@@ -10,6 +10,8 @@ import { Subject } from 'rxjs';
     styleUrls: ['./estimator-chart.component.scss']
 })
 export class EstimatorChartComponent implements OnInit, OnDestroy{
+  
+    //data received from EstimatorComponent
     @Input()
     importedEstimate: Estimate = undefined;
     
@@ -24,6 +26,8 @@ export class EstimatorChartComponent implements OnInit, OnDestroy{
 
     private avgUSMale = 59.62; //In 2017, 22,295,155 retired men lived in the United States
     private avgUSFemale = 60.11; //In 2017, 26,965,901 retired women lived in the United States
+  
+    //retiremeng averages from all US states and territories
     stateAverages = {
         AK: 61, WV: 61,
         AL: 62, AR: 62, KY: 62, LA: 62, MI: 62, NM: 62, OK: 62,
