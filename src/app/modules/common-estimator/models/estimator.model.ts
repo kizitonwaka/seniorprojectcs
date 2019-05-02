@@ -11,6 +11,7 @@ export interface SalEstimateResponse {
     SalEstimate$: BehaviorSubject<Estimate[]>;
 }
 
+//our object response to and from our database should look like this
 export interface EstimateInterface {
     Demographics: {
         Age: number,
@@ -34,9 +35,12 @@ export interface EstimateInterface {
     }
 }
 
+//class which implements the response
 export class Estimate implements  EstimateInterface, OnChanges{
     ngOnChanges(){
     }
+  
+    //user's personal info
     Demographics: {
         Age: number,
         Sex: string,
@@ -63,6 +67,8 @@ export class Estimate implements  EstimateInterface, OnChanges{
     YearlyContribution: number;
 
     /** notice the cleaner, more readable constructor?*/
+    //this constructor takes an estimate interface object and assigns it 
+    //to estimate class init to create estimate objects
     constructor (est: EstimateInterface) {
         this.Demographics = est.Demographics;
         this.Expenses = est.Expenses;
@@ -71,12 +77,14 @@ export class Estimate implements  EstimateInterface, OnChanges{
         this.YearlyContribution = this.yearlyContribution;
     } 
 
+    //return yearly expenses
     public get yearlyExpenses(): number {
         let sum = 0;
         Object.values(this.Expenses).forEach((value)=> { sum += value })
         return sum;
     }
 
+    //return financial independence number
     public get FINumber() {
         if(this.Factors.RetirementExpense !== undefined){
             console.log('FINUMBER',this.Factors.RetirementExpense / (this.Factors.SafeWithdrawalRate/100))
@@ -85,11 +93,13 @@ export class Estimate implements  EstimateInterface, OnChanges{
         return this.yearlyExpenses / (this.Factors.SafeWithdrawalRate/100);
     }
 
+    //return yearly savings
     public get yearlyContribution(): number {
         console.log('cont',this.Factors.AnnualSalary - this.yearlyExpenses)
         return this.Factors.AnnualSalary - this.yearlyExpenses;
     }
 
+    //return sum of investments should we implement them into different categories
     public get investmentPortfolio(): number {
         let FirstYearSavings = 0;
         Object.values(this.Investments).forEach((value)=> { FirstYearSavings += value });
@@ -98,6 +108,7 @@ export class Estimate implements  EstimateInterface, OnChanges{
     }
 
     /**
+     * return years to financial independence
      * FI Number = Yearly Spending / Safe Withdrawal Rate
      * The second part of the formula uses your FI Number to
      * figure out how many years it will take you to reach FI:
@@ -190,6 +201,7 @@ private NPER (Rate, Pmt, PV, FV, Type) {
     }
 }
 
+//how a created Estimate object looks like
 new Estimate ({
     Demographics: {
         Age: 41,
