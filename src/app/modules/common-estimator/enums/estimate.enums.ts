@@ -1,3 +1,7 @@
+/*make all changes to model here as well. Browsers console will return a lot of undefined if changes 
+are not matched here. Since this is the part used in the actual UI to collect data. Our enums are self-explanatory
+since the property values explain themselve
+*/
 export enum Demographics {
     Age = "age",
     Sex = "sex (M or F)",
